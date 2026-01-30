@@ -9,6 +9,7 @@ export default apiInitializer("1.8.0", (api) => {
     highlightActiveCategory(url);
     highlightActiveTag(url);
     initFloatingWidgets();
+    checkGuestGate(url);
   });
   
   // Navigation item click handlers
@@ -245,3 +246,118 @@ window.addEventListener("resize", () => {
     if (fab && currentUser) fab.style.display = "flex";
   }
 });
+
+// ==========================================
+// Guest Gate - 访客登录弹窗
+// ==========================================
+
+const GUEST_GATE_CONFIG = {
+  maxViews: 3,                    // 最大浏览次数
+  storageKey: "guest_topic_views", // localStorage 键名
+  sessionKey: "guest_gate_shown",  // 是否已显示过弹窗
+  showOnTopics: true,             // 在帖子详情页显示
+};
+
+function checkGuestGate(url) {
+  // 检查是否已登录
+  const currentUser = document.querySelector(".header-dropdown-toggle.current-user");
+  if (currentUser) {
+    return; // 已登录用户不显示
+  }
+  
+  // 检查是否在帖子详情页
+  if (!url.includes("/t/")) {
+    return;
+  }
+  
+  // 检查本次会话是否已显示过
+  if (sessionStorage.getItem(GUEST_GATE_CONFIG.sessionKey)) {
+    return;
+  }
+  
+  // 获取并增加浏览次数
+  let views = parseInt(localStorage.getItem(GUEST_GATE_CONFIG.storageKey) || "0");
+  views++;
+  localStorage.setItem(GUEST_GATE_CONFIG.storageKey, views.toString());
+  
+  // 检查是否达到阈值
+  if (views >= GUEST_GATE_CONFIG.maxViews) {
+    showGuestGateModal();
+    sessionStorage.setItem(GUEST_GATE_CONFIG.sessionKey, "true");
+  }
+}
+
+function showGuestGateModal() {
+  // 检查是否已存在
+  if (document.querySelector(".guest-gate-modal")) {
+    return;
+  }
+  
+  const modal = document.createElement("div");
+  modal.className = "guest-gate-modal";
+  modal.innerHTML = `
+    <div class="guest-gate-overlay"></div>
+    <div class="guest-gate-content">
+      <button class="guest-gate-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+      </button>
+      <div class="guest-gate-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+        </svg>
+      </div>
+      <h2 class="guest-gate-title">欢迎加入社区！</h2>
+      <p class="guest-gate-text">注册解锁更多精彩内容，与志同道合的朋友交流分享</p>
+      <div class="guest-gate-buttons">
+        <a href="/signup" class="guest-gate-btn guest-gate-btn-primary">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+          立即注册
+        </a>
+        <a href="/login" class="guest-gate-btn guest-gate-btn-secondary">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"/>
+          </svg>
+          已有账号？登录
+        </a>
+      </div>
+      <p class="guest-gate-footer">继续浏览即表示同意我们的<a href="/tos">服务条款</a></p>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  // 添加动画
+  requestAnimationFrame(() => {
+    modal.classList.add("show");
+  });
+  
+  // 关闭按钮事件
+  modal.querySelector(".guest-gate-close").addEventListener("click", () => {
+    closeGuestGateModal(modal);
+  });
+  
+  // 点击遮罩关闭
+  modal.querySelector(".guest-gate-overlay").addEventListener("click", () => {
+    closeGuestGateModal(modal);
+  });
+  
+  // ESC 键关闭
+  document.addEventListener("keydown", function escHandler(e) {
+    if (e.key === "Escape") {
+      closeGuestGateModal(modal);
+      document.removeEventListener("keydown", escHandler);
+    }
+  });
+}
+
+function closeGuestGateModal(modal) {
+  modal.classList.remove("show");
+  modal.classList.add("hide");
+  setTimeout(() => {
+    modal.remove();
+  }, 300);
+}
