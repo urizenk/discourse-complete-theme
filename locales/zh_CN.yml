@@ -1,0 +1,15 @@
+zh_CN:
+  theme_metadata:
+    description: "完整定制主题：顶部导航、网格布局、悬浮按钮和活动通知"
+  
+  js:
+    create_topic: "发布话题"
+    view_events: "查看全部活动"
+    events: "活动通知"
+    home: "首页"
+    general: "综合"
+    discourse: "讨论"
+    tech: "技术"
+    videos: "视频"
+    gaming: "游戏"
+    school: "学习"
