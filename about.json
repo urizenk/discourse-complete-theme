@@ -1,0 +1,17 @@
+{
+  "name": "Complete Custom Theme",
+  "about_url": "https://github.com/urizenk/discourse-complete-theme",
+  "license_url": "https://github.com/urizenk/discourse-complete-theme/blob/main/LICENSE",
+  "component": false,
+  "authors": "Custom Development",
+  "theme_version": "1.0.0",
+  "minimum_discourse_version": "2.7.0",
+  "maximum_discourse_version": null,
+  "assets": {
+    "event1": "assets/event-banner-1.png",
+    "event2": "assets/event-banner-2.png"
+  },
+  "color_schemes": {},
+  "modifiers": {},
+  "learn_more": "https://github.com/urizenk/discourse-complete-theme#readme"
+}

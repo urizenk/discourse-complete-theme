@@ -1,0 +1,30 @@
+# Theme Settings
+
+show_floating_button:
+  type: bool
+  default: true
+  description: "Show floating create topic button for logged-in users"
+
+show_activity_widget:
+  type: bool
+  default: true
+  description: "Show activity/events widget on desktop"
+
+nav_background_color:
+  type: string
+  default: "#000000"
+  description: "Top navigation bar background color"
+
+nav_active_color:
+  type: string
+  default: "#228B22"
+  description: "Active category highlight color"
+
+grid_columns:
+  type: enum
+  default: "3"
+  choices:
+    - "2"
+    - "3"
+    - "4"
+  description: "Number of columns in topic grid layout"

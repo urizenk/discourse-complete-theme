@@ -1,0 +1,8 @@
+en:
+  theme_metadata:
+    description: "Complete custom theme with top navigation, grid layout, floating button and activity widget"
+  
+  js:
+    create_topic: "Create Topic"
+    view_events: "View All Events"
+    events: "Events"

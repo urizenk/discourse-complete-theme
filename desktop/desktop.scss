@@ -1,0 +1,254 @@
+// ==========================================
+// Desktop Only Styles
+// ==========================================
+
+#main-outlet-wrapper {
+  display: block;
+}
+
+.sidebar-wrapper {
+  display: none;
+  z-index: z("header") + 1;
+  position: fixed;
+  top: var(--header-offset);
+  width: 280px;
+  max-height: 80vh;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  margin-top: -0.6rem;
+  border: 1px solid var(--primary-low);
+  border-radius: 12px;
+  background: var(--secondary);
+  overflow: hidden;
+
+  [data-section-name="chat-channels"],
+  [data-section-name="user-threads"],
+  [data-section-name="chat-dms"] {
+    display: none;
+  }
+
+  .has-sidebar-page & {
+    display: block;
+  }
+
+  .sidebar-container {
+    border-right: 0;
+  }
+
+  .sidebar__panel-switch-button {
+    display: none;
+  }
+}
+
+body.has-sidebar-page .wrap {
+  max-width: var(--d-max-width) !important;
+  padding: 0 var(--d-wrap-padding-h) !important;
+}
+
+.c-navbar__full-page-button {
+  display: none;
+}
+
+.btn-sidebar-toggle {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: var(--primary-very-low);
+  }
+  
+  .has-sidebar-page & {
+    border: 1px solid var(--primary-low);
+  }
+}
+
+// ==========================================
+// Floating Action Button
+// ==========================================
+.robotime-fab {
+  position: fixed;
+  left: 24px;
+  bottom: 32px;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #228B22, #32CD32);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(34, 139, 34, 0.4);
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 8px 25px rgba(34, 139, 34, 0.5);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  .fab-icon {
+    width: 24px;
+    height: 24px;
+    fill: #fff;
+  }
+  
+  .fab-tooltip {
+    position: absolute;
+    left: 68px;
+    background: #333;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    pointer-events: none;
+    
+    &::before {
+      content: "";
+      position: absolute;
+      left: -6px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 6px solid transparent;
+      border-right-color: #333;
+    }
+  }
+  
+  &:hover .fab-tooltip {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+// ==========================================
+// Activity Widget
+// ==========================================
+.robotime-activity-widget {
+  position: fixed;
+  left: 24px;
+  bottom: 110px;
+  width: 220px;
+  background: var(--secondary);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  z-index: 998;
+  border: 1px solid var(--primary-low);
+  
+  .widget-header {
+    background: linear-gradient(135deg, #228B22, #32CD32);
+    color: #fff;
+    padding: 14px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+  }
+  
+  .carousel {
+    position: relative;
+    height: 130px;
+    background: var(--primary-very-low);
+    
+    .slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      
+      &.active {
+        opacity: 1;
+      }
+      
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+    
+    .dots {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        padding: 0;
+        
+        &.active,
+        &:hover {
+          background: #fff;
+          transform: scale(1.2);
+        }
+      }
+    }
+  }
+  
+  .widget-link {
+    display: block;
+    padding: 12px 16px;
+    text-align: center;
+    color: #228B22;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    border-top: 1px solid var(--primary-low);
+    transition: background 0.2s;
+    
+    &:hover {
+      background: var(--primary-very-low);
+    }
+  }
+}
+
+// ==========================================
+// Hide on Mobile
+// ==========================================
+@media (max-width: 768px) {
+  .robotime-fab,
+  .robotime-activity-widget {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: calc(17em + 850px)) {
+  .has-sidebar-page {
+    .topic-list .posters {
+      width: 146px;
+      text-align: left;
+    }
+    .topic-list .posts {
+      width: 4.3em;
+    }
+    .topic-list .views {
+      display: table-cell;
+    }
+  }
+}
