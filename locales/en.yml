@@ -3,6 +3,13 @@ en:
     description: "Complete custom theme with top navigation, grid layout, floating button and activity widget"
   
   js:
-    create_topic: "Create Topic"
+    create_topic: "NEW TOPIC"
     view_events: "View All Events"
-    events: "Events"
+    events: "Official Events"
+    home: "Home"
+    news_giveaways: "News & Giveaways"
+    need_a_hand: "Need A Hand?"
+    nancis_diary: "Nanci's Diary"
+    how_to: "How To"
+    showcase: "Showcase"
+    community: "Community"

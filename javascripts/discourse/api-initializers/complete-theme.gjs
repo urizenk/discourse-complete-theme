@@ -156,7 +156,7 @@ function createFloatingButton() {
     <svg class="fab-icon" viewBox="0 0 24 24">
       <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
     </svg>
-    <span class="fab-tooltip">发布话题</span>
+    <span class="fab-text">NEW TOPIC</span>
   `;
   
   fab.addEventListener("click", () => {
@@ -184,21 +184,21 @@ function createActivityWidget() {
       <svg viewBox="0 0 24 24">
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
       </svg>
-      活动通知
+      Official Events
     </div>
     <div class="carousel">
       <div class="slide active">
-        <div style="width:100%;height:100%;background:linear-gradient(135deg,#228B22,#32CD32);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">活动横幅 1</div>
+        <div style="width:100%;height:100%;background:#228B22;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">Event Banner 1</div>
       </div>
       <div class="slide">
-        <div style="width:100%;height:100%;background:linear-gradient(135deg,#1E90FF,#00BFFF);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">活动横幅 2</div>
+        <div style="width:100%;height:100%;background:#1E90FF;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">Event Banner 2</div>
       </div>
       <div class="dots">
         <button class="dot active" data-index="0"></button>
         <button class="dot" data-index="1"></button>
       </div>
     </div>
-    <a href="/latest" class="widget-link">查看全部活动</a>
+    <a href="/latest" class="widget-link">View All Events</a>
   `;
   
   document.body.appendChild(widget);
