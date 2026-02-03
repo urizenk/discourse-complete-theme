@@ -1,33 +1,35 @@
 // ==========================================
-// Desktop Only Styles
+// Desktop Only Styles - 按设计稿布局
 // ==========================================
 
+// 主布局：左侧边栏 + 右侧内容
 #main-outlet-wrapper {
-  display: block;
+  display: flex;
+  gap: 0;
+  max-width: 100%;
 }
 
+// 左侧边栏 - 固定显示
 .sidebar-wrapper {
-  display: none;
-  z-index: z("header") + 1;
-  position: fixed;
-  top: var(--header-offset);
-  width: 280px;
-  max-height: 80vh;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  margin-top: -0.6rem;
-  border: 1px solid var(--primary-low);
-  border-radius: 12px;
+  display: block !important;
+  position: sticky;
+  top: 120px;
+  width: 260px;
+  min-width: 260px;
+  height: fit-content;
+  max-height: calc(100vh - 140px);
   background: var(--secondary);
-  overflow: hidden;
+  border: 1px solid var(--primary-low);
+  border-radius: 8px;
+  margin: 20px 0 20px 20px;
+  overflow-y: auto;
 
+  // 隐藏不需要的部分
   [data-section-name="chat-channels"],
-  [data-section-name="user-threads"],
-  [data-section-name="chat-dms"] {
-    display: none;
-  }
-
-  .has-sidebar-page & {
-    display: block;
+  [data-section-name="chat-dms"],
+  [data-section-name="categories"],
+  [data-section-name="tags"] {
+    display: none !important;
   }
 
   .sidebar-container {
@@ -37,11 +39,37 @@
   .sidebar__panel-switch-button {
     display: none;
   }
+
+  .sidebar-sections {
+    padding: 12px;
+  }
+
+  .sidebar-section-link {
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+
+    &:hover {
+      background: var(--primary-very-low);
+    }
+
+    &.active {
+      background: var(--tertiary);
+      color: #fff;
+    }
+  }
+}
+
+// 内容区域
+#main-outlet {
+  flex: 1;
+  min-width: 0;
+  padding: 20px;
 }
 
 body.has-sidebar-page .wrap {
-  max-width: var(--d-max-width) !important;
-  padding: 0 var(--d-wrap-padding-h) !important;
+  max-width: 100% !important;
+  padding: 0 !important;
 }
 
 .c-navbar__full-page-button {
@@ -49,29 +77,29 @@ body.has-sidebar-page .wrap {
 }
 
 .btn-sidebar-toggle {
-  border: 1px solid transparent;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: var(--primary-very-low);
-  }
-
-  .has-sidebar-page & {
-    border: 1px solid var(--primary-low);
-  }
+  display: none !important;
 }
 
 // ==========================================
-// Floating Action Button - 红色矩形按钮 (按设计稿，无渐变)
+// 左侧固定面板容器
+// ==========================================
+.robotime-left-panel {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  width: 220px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// ==========================================
+// NEW TOPIC 按钮 - 红色矩形
 // ==========================================
 .robotime-fab {
-  position: fixed;
-  left: 24px;
-  bottom: 32px;
-  width: 200px;
-  height: auto;
-  padding: 14px 24px;
+  width: 100%;
+  padding: 14px 20px;
   background: #EE5A5A;
   border: none;
   border-radius: 25px;
@@ -80,23 +108,17 @@ body.has-sidebar-page .wrap {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 4px 12px rgba(238, 90, 90, 0.3);
-  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(238, 90, 90, 0.25);
   transition: all 0.2s ease;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(238, 90, 90, 0.4);
     background: #E53935;
-  }
-
-  &:active {
-    transform: scale(0.98);
+    box-shadow: 0 4px 12px rgba(238, 90, 90, 0.35);
   }
 
   .fab-icon {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     fill: #fff;
   }
 
@@ -104,42 +126,33 @@ body.has-sidebar-page .wrap {
     color: #fff;
     font-size: 14px;
     font-weight: 600;
-    letter-spacing: 0.5px;
-  }
-
-  .fab-tooltip {
-    display: none;
   }
 }
 
 // ==========================================
-// Activity Widget - 活动通知块 (无渐变)
+// Activity Widget - 活动通知块
 // ==========================================
 .robotime-activity-widget {
-  position: fixed;
-  left: 24px;
-  bottom: 90px;
-  width: 200px;
+  width: 100%;
   background: var(--secondary);
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   overflow: hidden;
-  z-index: 998;
   border: 1px solid var(--primary-low);
 
   .widget-header {
     background: #228B22;
     color: #fff;
-    padding: 14px 16px;
+    padding: 12px 14px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px;
     display: flex;
     align-items: center;
     gap: 8px;
 
     svg {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       fill: currentColor;
     }
   }
@@ -215,26 +228,19 @@ body.has-sidebar-page .wrap {
 // Hide on Mobile
 // ==========================================
 @media (max-width: 768px) {
-
-  .robotime-fab,
-  .robotime-activity-widget {
+  .robotime-left-panel {
     display: none !important;
   }
-}
 
-@media screen and (max-width: calc(17em + 850px)) {
-  .has-sidebar-page {
-    .topic-list .posters {
-      width: 146px;
-      text-align: left;
-    }
+  .sidebar-wrapper {
+    display: none !important;
+  }
 
-    .topic-list .posts {
-      width: 4.3em;
-    }
+  #main-outlet-wrapper {
+    display: block;
+  }
 
-    .topic-list .views {
-      display: table-cell;
-    }
+  #main-outlet {
+    padding: 12px;
   }
 }

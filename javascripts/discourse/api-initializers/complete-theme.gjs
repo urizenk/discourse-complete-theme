@@ -131,25 +131,37 @@ function highlightActiveTag(currentUrl) {
 // Initialize floating widgets
 function initFloatingWidgets() {
   // Check if already initialized
-  if (document.querySelector(".robotime-fab")) {
+  if (document.querySelector(".robotime-left-panel")) {
     return;
   }
   
-  // Check if logged in
+  // Only on desktop
+  if (window.innerWidth <= 768) {
+    return;
+  }
+  
+  // Create left panel container
+  const panel = document.createElement("div");
+  panel.className = "robotime-left-panel";
+  
+  // Add activity widget
+  const widget = createActivityWidgetElement();
+  panel.appendChild(widget);
+  
+  // Add NEW TOPIC button for logged-in users
   const currentUser = document.querySelector(".header-dropdown-toggle.current-user");
-  
-  // Create floating button for logged-in users
   if (currentUser) {
-    createFloatingButton();
+    const fab = createFloatingButtonElement();
+    panel.appendChild(fab);
   }
   
-  // Create activity widget (desktop only)
-  if (window.innerWidth > 768) {
-    createActivityWidget();
-  }
+  document.body.appendChild(panel);
+  
+  // Initialize carousel
+  initCarousel(widget);
 }
 
-function createFloatingButton() {
+function createFloatingButtonElement() {
   const fab = document.createElement("button");
   fab.className = "robotime-fab";
   fab.innerHTML = `
@@ -168,15 +180,10 @@ function createFloatingButton() {
     }
   });
   
-  document.body.appendChild(fab);
+  return fab;
 }
 
-function createActivityWidget() {
-  // Check if already exists
-  if (document.querySelector(".robotime-activity-widget")) {
-    return;
-  }
-  
+function createActivityWidgetElement() {
   const widget = document.createElement("div");
   widget.className = "robotime-activity-widget";
   widget.innerHTML = `
@@ -188,10 +195,10 @@ function createActivityWidget() {
     </div>
     <div class="carousel">
       <div class="slide active">
-        <div style="width:100%;height:100%;background:#228B22;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">Event Banner 1</div>
+        <div style="width:100%;height:100%;background:#228B22;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;">Event Banner 1</div>
       </div>
       <div class="slide">
-        <div style="width:100%;height:100%;background:#1E90FF;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">Event Banner 2</div>
+        <div style="width:100%;height:100%;background:#1E90FF;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;">Event Banner 2</div>
       </div>
       <div class="dots">
         <button class="dot active" data-index="0"></button>
@@ -201,9 +208,10 @@ function createActivityWidget() {
     <a href="/latest" class="widget-link">View All Events</a>
   `;
   
-  document.body.appendChild(widget);
-  
-  // Carousel logic
+  return widget;
+}
+
+function initCarousel(widget) {
   const slides = widget.querySelectorAll(".slide");
   const dots = widget.querySelectorAll(".dot");
   let currentIndex = 0;
@@ -234,16 +242,12 @@ function createActivityWidget() {
 
 // Responsive handling
 window.addEventListener("resize", () => {
-  const widget = document.querySelector(".robotime-activity-widget");
-  const fab = document.querySelector(".robotime-fab");
+  const panel = document.querySelector(".robotime-left-panel");
   
   if (window.innerWidth <= 768) {
-    if (widget) widget.style.display = "none";
-    if (fab) fab.style.display = "none";
+    if (panel) panel.style.display = "none";
   } else {
-    if (widget) widget.style.display = "block";
-    const currentUser = document.querySelector(".header-dropdown-toggle.current-user");
-    if (fab && currentUser) fab.style.display = "flex";
+    if (panel) panel.style.display = "flex";
   }
 });
 
