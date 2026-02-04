@@ -273,7 +273,7 @@ function initCustomSidebar() {
         <span class="sidebar-section-header-text">Topics</span>
       </div>
       <ul class="sidebar-section-links">
-        <li><a href="/my/activity" class="sidebar-link"><span>My Posts</span></a></li>
+        <li><a href="/my/activity" class="sidebar-link"><span>My Activity</span></a></li>
         <li><a href="/my/messages" class="sidebar-link"><span>my messages</span></a></li>
         <li><a href="/my/invited" class="sidebar-link"><span>Invite Friends</span></a></li>
         <li><a href="/latest" class="sidebar-link"><span>Topics</span></a></li>
