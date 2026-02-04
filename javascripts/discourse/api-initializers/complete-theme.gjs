@@ -18,6 +18,13 @@ export default apiInitializer("1.8.0", (api) => {
     const item = e.target.closest(".rtt-item");
     if (item) {
       e.preventDefault();
+      
+      // 签到按钮特殊处理
+      if (item.dataset.action === "checkin") {
+        showCheckinModal();
+        return;
+      }
+      
       const url = item.dataset.url;
       if (url) {
         router.transitionTo(url);
@@ -250,6 +257,132 @@ window.addEventListener("resize", () => {
     if (panel) panel.style.display = "flex";
   }
 });
+
+// ==========================================
+// Check-in Modal - 签到弹窗
+// ==========================================
+
+function showCheckinModal() {
+  // 检查是否已登录
+  const currentUser = document.querySelector(".header-dropdown-toggle.current-user");
+  if (!currentUser) {
+    // 未登录，跳转到登录页
+    window.location.href = "/login";
+    return;
+  }
+  
+  // 创建签到弹窗
+  const existingModal = document.querySelector(".checkin-modal-overlay");
+  if (existingModal) {
+    existingModal.remove();
+  }
+  
+  const modal = document.createElement("div");
+  modal.className = "checkin-modal-overlay";
+  modal.innerHTML = `
+    <div class="checkin-modal">
+      <div class="checkin-modal-header">
+        <h3>Daily Check-in</h3>
+        <button class="close-btn">&times;</button>
+      </div>
+      <div class="checkin-modal-body">
+        <div class="checkin-loading">Loading...</div>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  // 关闭按钮
+  modal.querySelector(".close-btn").addEventListener("click", () => {
+    modal.remove();
+  });
+  
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.remove();
+    }
+  });
+  
+  // 加载签到数据
+  loadCheckinData(modal);
+}
+
+async function loadCheckinData(modal) {
+  try {
+    const response = await fetch("/custom-plugin/checkin");
+    const data = await response.json();
+    
+    const body = modal.querySelector(".checkin-modal-body");
+    
+    if (data.checked_in_today) {
+      body.innerHTML = `
+        <div class="checkin-success">
+          <div class="check-icon">✓</div>
+          <h4>Already Checked In Today!</h4>
+          <p>Streak: ${data.consecutive_days} days</p>
+          <div class="checkin-stats-mini">
+            <span>Total: ${data.stats?.total_checkins || 0}</span>
+            <span>Points: ${data.stats?.total_points || 0}</span>
+          </div>
+        </div>
+      `;
+    } else {
+      body.innerHTML = `
+        <div class="checkin-prompt">
+          <div class="streak-info">Current Streak: ${data.consecutive_days} days</div>
+          <button class="checkin-now-btn">Check In Now</button>
+          <p class="checkin-hint">Check in daily for bonus points!</p>
+        </div>
+      `;
+      
+      body.querySelector(".checkin-now-btn").addEventListener("click", async () => {
+        const btn = body.querySelector(".checkin-now-btn");
+        btn.disabled = true;
+        btn.textContent = "Checking in...";
+        
+        try {
+          const res = await fetch("/custom-plugin/checkin", { method: "POST" });
+          const result = await res.json();
+          
+          if (result.success) {
+            body.innerHTML = `
+              <div class="checkin-success">
+                <div class="check-icon animated">✓</div>
+                <h4>Check-in Successful!</h4>
+                <p>+${result.checkin?.points_earned || 10} points</p>
+                <p>Streak: ${result.consecutive_days} days</p>
+                <div class="lottery-prompt">
+                  <p>You earned a lucky draw chance!</p>
+                  <button class="lottery-btn">Try Your Luck</button>
+                </div>
+              </div>
+            `;
+            
+            body.querySelector(".lottery-btn")?.addEventListener("click", () => {
+              modal.remove();
+              // 跳转到个人资料页签到面板
+              const username = document.querySelector(".header-dropdown-toggle.current-user .avatar")?.title;
+              if (username) {
+                window.location.href = `/u/${username}/preferences`;
+              }
+            });
+          }
+        } catch (err) {
+          btn.textContent = "Error, try again";
+          btn.disabled = false;
+        }
+      });
+    }
+  } catch (error) {
+    modal.querySelector(".checkin-modal-body").innerHTML = `
+      <div class="checkin-error">
+        <p>Failed to load check-in data</p>
+        <button onclick="this.closest('.checkin-modal-overlay').remove()">Close</button>
+      </div>
+    `;
+  }
+}
 
 // ==========================================
 // Guest Gate - 访客登录弹窗

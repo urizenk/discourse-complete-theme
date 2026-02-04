@@ -105,6 +105,39 @@
       }
     }
 
+    // 签到入口特殊样式
+    &.rtt-checkin {
+      background: #EE5A5A;
+      border-radius: 20px;
+      animation: checkinPulse 2s infinite;
+
+      .rtt-icon svg {
+        fill: #fff;
+      }
+
+      .rtt-text {
+        color: #fff;
+        font-weight: 600;
+      }
+
+      &:hover {
+        background: #E53935;
+        transform: scale(1.1);
+      }
+    }
+
+    @keyframes checkinPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(238, 90, 90, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 0 8px rgba(238, 90, 90, 0);
+      }
+    }
+
     .rtt-icon {
       width: 40px;
       height: 40px;
@@ -861,5 +894,222 @@
   .guest-gate-btn {
     padding: 12px 20px;
     font-size: 14px;
+  }
+}
+
+// ==========================================
+// Check-in Modal Styles
+// ==========================================
+.checkin-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease;
+}
+
+.checkin-modal {
+  background: var(--secondary);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 380px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.checkin-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #228B22;
+  color: #fff;
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    opacity: 0.8;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.checkin-modal-body {
+  padding: 24px;
+  text-align: center;
+}
+
+.checkin-loading {
+  padding: 40px;
+  color: var(--primary-medium);
+}
+
+.checkin-success {
+  .check-icon {
+    width: 60px;
+    height: 60px;
+    background: #228B22;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    margin: 0 auto 16px;
+
+    &.animated {
+      animation: bounceIn 0.5s ease;
+    }
+  }
+
+  h4 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    color: var(--primary);
+  }
+
+  p {
+    margin: 4px 0;
+    color: var(--primary-medium);
+  }
+
+  .checkin-stats-mini {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--primary-low);
+
+    span {
+      font-size: 13px;
+      color: var(--primary-medium);
+    }
+  }
+
+  .lottery-prompt {
+    margin-top: 20px;
+    padding: 16px;
+    background: #667eea;
+    border-radius: 12px;
+    color: #fff;
+
+    p {
+      margin: 0 0 12px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .lottery-btn {
+      background: #FFD700;
+      color: #333;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 20px;
+      font-weight: 600;
+      cursor: pointer;
+
+      &:hover {
+        background: #FFC107;
+      }
+    }
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.checkin-prompt {
+  .streak-info {
+    font-size: 14px;
+    color: var(--primary-medium);
+    margin-bottom: 20px;
+  }
+
+  .checkin-now-btn {
+    width: 100%;
+    padding: 14px;
+    background: #228B22;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      background: #1B7A1B;
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: default;
+    }
+  }
+
+  .checkin-hint {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--primary-low-mid);
+  }
+}
+
+.checkin-error {
+  padding: 20px;
+
+  p {
+    color: var(--danger);
+    margin-bottom: 16px;
+  }
+
+  button {
+    padding: 8px 20px;
+    background: var(--primary-low);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
   }
 }
