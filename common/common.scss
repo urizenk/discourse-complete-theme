@@ -236,6 +236,121 @@
 }
 
 // ==========================================
+// Category Description Banner
+// ==========================================
+.category-heading {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 24px;
+  background: var(--secondary);
+  border: 1px solid var(--primary-low);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  
+  .category-logo {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+  }
+  
+  .category-title-description {
+    flex: 1;
+    
+    h1, .category-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 0 0 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      .category-color {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+    }
+    
+    .category-description, p {
+      font-size: 14px;
+      color: var(--primary-medium);
+      line-height: 1.6;
+      margin: 0;
+      
+      a {
+        color: var(--tertiary);
+        text-decoration: none;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+// Alternative: Custom category banner for specific styling
+.custom-category-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #FFF8E7;
+  border-left: 4px solid #FF9800;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  
+  .banner-icon {
+    width: 40px;
+    height: 40px;
+    background: #FF9800;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  
+  .banner-content {
+    flex: 1;
+    
+    .banner-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin: 0 0 4px 0;
+    }
+    
+    .banner-description {
+      font-size: 13px;
+      color: #666;
+      margin: 0;
+      
+      a {
+        color: #FF9800;
+        text-decoration: none;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+// ==========================================
 // General Layout Adjustments
 // ==========================================
 .d-header {
@@ -1111,5 +1226,59 @@
     border: none;
     border-radius: 6px;
     cursor: pointer;
+  }
+}
+
+// ==========================================
+// Guest Reading Time Indicator
+// ==========================================
+.guest-read-indicator {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  animation: slideUp 0.3s ease;
+  
+  .indicator-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    border-radius: 30px;
+    font-size: 13px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    
+    svg {
+      flex-shrink: 0;
+    }
+    
+    a {
+      color: #FFD700;
+      text-decoration: none;
+      font-weight: 500;
+      margin-left: 8px;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .guest-read-indicator {
+    bottom: 70px;
+    left: 16px;
+    right: 16px;
+    transform: none;
+    
+    .indicator-content {
+      justify-content: center;
+      flex-wrap: wrap;
+      text-align: center;
+    }
   }
 }

@@ -10,6 +10,7 @@ export default apiInitializer("1.8.0", (api) => {
     highlightActiveTag(url);
     initFloatingWidgets();
     checkGuestGate(url);
+    enhanceCategoryBanner();
   });
   
   // Navigation item click handlers
@@ -133,6 +134,26 @@ function highlightActiveTag(currentUrl) {
       item.classList.add("active");
     }
   });
+}
+
+// Enhance category banner display
+function enhanceCategoryBanner() {
+  // Wait for DOM to be ready
+  setTimeout(() => {
+    const categoryBox = document.querySelector(".category-box, .category-heading");
+    if (!categoryBox) return;
+    
+    // Add enhanced class if not already present
+    if (!categoryBox.classList.contains("enhanced")) {
+      categoryBox.classList.add("enhanced");
+    }
+    
+    // Ensure description is visible
+    const description = categoryBox.querySelector(".category-description, .category-box-description");
+    if (description) {
+      description.style.display = "block";
+    }
+  }, 100);
 }
 
 // Initialize floating widgets
@@ -390,20 +411,27 @@ async function loadCheckinData(modal) {
 
 const GUEST_GATE_CONFIG = {
   maxViews: 3,                    // 最大浏览次数
+  readTimeLimit: 180,             // 阅读时间限制（秒）- 3分钟
   storageKey: "guest_topic_views", // localStorage 键名
+  timeKey: "guest_read_time",     // 阅读时间键名
   sessionKey: "guest_gate_shown",  // 是否已显示过弹窗
   showOnTopics: true,             // 在帖子详情页显示
 };
+
+let guestReadTimer = null;
+let guestReadStartTime = null;
 
 function checkGuestGate(url) {
   // 检查是否已登录
   const currentUser = document.querySelector(".header-dropdown-toggle.current-user");
   if (currentUser) {
+    stopGuestReadTimer();
     return; // 已登录用户不显示
   }
   
   // 检查是否在帖子详情页
   if (!url.includes("/t/")) {
+    stopGuestReadTimer();
     return;
   }
   
@@ -417,11 +445,94 @@ function checkGuestGate(url) {
   views++;
   localStorage.setItem(GUEST_GATE_CONFIG.storageKey, views.toString());
   
-  // 检查是否达到阈值
+  // 检查是否达到浏览次数阈值
   if (views >= GUEST_GATE_CONFIG.maxViews) {
     showGuestGateModal();
     sessionStorage.setItem(GUEST_GATE_CONFIG.sessionKey, "true");
+    return;
   }
+  
+  // 启动阅读时间计时器
+  startGuestReadTimer();
+}
+
+function startGuestReadTimer() {
+  // 停止之前的计时器
+  stopGuestReadTimer();
+  
+  // 获取已累计的阅读时间
+  const savedTime = parseInt(localStorage.getItem(GUEST_GATE_CONFIG.timeKey) || "0");
+  
+  // 如果已超过限制，直接显示弹窗
+  if (savedTime >= GUEST_GATE_CONFIG.readTimeLimit) {
+    showGuestGateModal();
+    sessionStorage.setItem(GUEST_GATE_CONFIG.sessionKey, "true");
+    return;
+  }
+  
+  guestReadStartTime = Date.now();
+  
+  // 计算剩余时间
+  const remainingTime = (GUEST_GATE_CONFIG.readTimeLimit - savedTime) * 1000;
+  
+  // 设置计时器
+  guestReadTimer = setTimeout(() => {
+    // 保存累计阅读时间
+    const elapsedSeconds = Math.floor((Date.now() - guestReadStartTime) / 1000);
+    localStorage.setItem(GUEST_GATE_CONFIG.timeKey, (savedTime + elapsedSeconds).toString());
+    
+    // 显示弹窗
+    showGuestGateModal();
+    sessionStorage.setItem(GUEST_GATE_CONFIG.sessionKey, "true");
+  }, remainingTime);
+  
+  // 显示阅读时间提示（可选）
+  showReadTimeIndicator(savedTime, GUEST_GATE_CONFIG.readTimeLimit);
+}
+
+function stopGuestReadTimer() {
+  if (guestReadTimer) {
+    // 保存当前累计的阅读时间
+    if (guestReadStartTime) {
+      const savedTime = parseInt(localStorage.getItem(GUEST_GATE_CONFIG.timeKey) || "0");
+      const elapsedSeconds = Math.floor((Date.now() - guestReadStartTime) / 1000);
+      localStorage.setItem(GUEST_GATE_CONFIG.timeKey, (savedTime + elapsedSeconds).toString());
+    }
+    
+    clearTimeout(guestReadTimer);
+    guestReadTimer = null;
+    guestReadStartTime = null;
+  }
+  
+  // 移除阅读时间提示
+  const indicator = document.querySelector(".guest-read-indicator");
+  if (indicator) {
+    indicator.remove();
+  }
+}
+
+function showReadTimeIndicator(usedTime, totalTime) {
+  // 移除旧的提示
+  const existing = document.querySelector(".guest-read-indicator");
+  if (existing) {
+    existing.remove();
+  }
+  
+  const remainingMinutes = Math.ceil((totalTime - usedTime) / 60);
+  
+  const indicator = document.createElement("div");
+  indicator.className = "guest-read-indicator";
+  indicator.innerHTML = `
+    <div class="indicator-content">
+      <svg viewBox="0 0 24 24" width="16" height="16">
+        <path fill="currentColor" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+      </svg>
+      <span>Guest reading: ${remainingMinutes} min left</span>
+      <a href="/signup">Sign up for unlimited</a>
+    </div>
+  `;
+  
+  document.body.appendChild(indicator);
 }
 
 function showGuestGateModal() {

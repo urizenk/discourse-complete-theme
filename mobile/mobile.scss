@@ -1,0 +1,363 @@
+// ==========================================
+// Mobile Styles - 移动端适配
+// ==========================================
+
+// 隐藏桌面端专属元素
+.robotime-left-panel,
+.robotime-fab,
+.robotime-activity-widget {
+  display: none !important;
+}
+
+// 侧边栏在移动端隐藏
+.sidebar-wrapper {
+  display: none !important;
+}
+
+// ==========================================
+// 顶部导航栏移动端适配
+// ==========================================
+.robotime-tag-top {
+  top: 50px !important;
+  padding: 8px 0 !important;
+  
+  .rtt-arrow {
+    width: 28px;
+    height: 28px;
+    margin: 0 4px;
+  }
+  
+  .rtt-item {
+    padding: 6px 10px;
+    min-width: 60px;
+    
+    .rtt-icon {
+      width: 32px;
+      height: 32px;
+      margin-bottom: 4px;
+      
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+    
+    .rtt-text {
+      font-size: 10px;
+    }
+    
+    // 签到按钮移动端样式
+    &.rtt-checkin {
+      padding: 6px 12px;
+      
+      .rtt-text {
+        font-size: 11px;
+      }
+    }
+  }
+  
+  // 滚动收缩状态
+  &.hideImg {
+    .rtt-item {
+      padding: 4px 10px;
+      min-width: 50px;
+      
+      .rtt-text {
+        font-size: 11px;
+      }
+    }
+  }
+}
+
+// 标签导航栏移动端
+.robotime-tag-nav {
+  padding: 8px 12px;
+  gap: 6px;
+  
+  .tag-nav-item {
+    padding: 4px 12px;
+    font-size: 12px;
+  }
+}
+
+// ==========================================
+// 帖子列表移动端适配
+// ==========================================
+.topic-list .topic-list-body {
+  grid-template-columns: 1fr !important;
+  gap: 12px !important;
+}
+
+.topic-list .topic-list-item {
+  border-radius: 8px;
+  
+  .topic-thumbnail {
+    max-height: 150px;
+  }
+  
+  .main-link {
+    padding: 12px;
+    
+    .link-top-line .title {
+      font-size: 14px;
+    }
+  }
+  
+  // 统计数据
+  .posts,
+  .views {
+    font-size: 11px;
+  }
+  
+  .posters a img.avatar {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+// ==========================================
+// 分类说明移动端适配
+// ==========================================
+.category-heading {
+  padding: 16px;
+  margin-bottom: 16px;
+  flex-direction: column;
+  gap: 12px;
+  
+  .category-logo {
+    width: 48px;
+    height: 48px;
+    align-self: flex-start;
+  }
+  
+  .category-title-description {
+    h1, .category-name {
+      font-size: 18px;
+    }
+    
+    .category-description, p {
+      font-size: 13px;
+    }
+  }
+}
+
+// ==========================================
+// 主内容区域
+// ==========================================
+#main-outlet-wrapper {
+  display: block !important;
+}
+
+#main-outlet {
+  padding: 12px !important;
+}
+
+.wrap {
+  padding: 0 !important;
+}
+
+// ==========================================
+// Header 调整
+// ==========================================
+.d-header {
+  .header-title {
+    margin-left: 8px;
+  }
+  
+  #site-logo {
+    max-height: 32px !important;
+  }
+}
+
+// ==========================================
+// 用户资料页移动端适配
+// ==========================================
+.custom-plugin-container {
+  .custom-plugin-tabs {
+    .tabs-nav {
+      flex-wrap: wrap;
+      gap: 6px;
+      
+      .tab {
+        padding: 8px 12px;
+        font-size: 12px;
+        flex: 1;
+        min-width: 80px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+// 签到面板
+.checkin-panel {
+  padding: 16px;
+  
+  .checkin-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    
+    .stat-item {
+      padding: 8px;
+      
+      .stat-value {
+        font-size: 18px;
+      }
+      
+      .stat-label {
+        font-size: 10px;
+      }
+    }
+  }
+}
+
+// 老虎机移动端
+.lottery-panel .slot-machine {
+  .slot-reel {
+    width: 50px;
+    height: 60px;
+    
+    .slot-symbol {
+      font-size: 28px;
+    }
+  }
+}
+
+// 待办清单
+.todo-panel {
+  padding: 16px;
+  
+  .todo-input-wrapper .todo-input {
+    flex-wrap: wrap;
+    
+    input {
+      width: 100%;
+      order: 1;
+    }
+    
+    .upload-btn {
+      order: 2;
+    }
+    
+    button:not(.upload-btn) {
+      order: 3;
+      flex: 1;
+    }
+  }
+  
+  .todo-item.has-image .todo-image {
+    margin-left: 0;
+    margin-top: 8px;
+    
+    img {
+      max-width: 100%;
+    }
+  }
+}
+
+// 徽章墙
+.badge-wall {
+  .badge-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px;
+  }
+  
+  .badge-card {
+    padding: 12px 8px;
+    
+    .badge-icon {
+      width: 40px;
+      height: 40px;
+    }
+    
+    .badge-name {
+      font-size: 11px;
+    }
+  }
+}
+
+// 表情面板
+.custom-emoji-panel {
+  padding: 16px;
+  
+  .emoji-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  
+  .emoji-item {
+    img {
+      width: 36px;
+      height: 36px;
+    }
+  }
+}
+
+// ==========================================
+// 弹窗移动端适配
+// ==========================================
+.checkin-modal-overlay,
+.guest-gate-modal,
+.prize-modal-overlay {
+  padding: 16px;
+}
+
+.checkin-modal,
+.guest-gate-content,
+.prize-modal {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 16px;
+}
+
+// ==========================================
+// 用户卡片移动端
+// ==========================================
+.user-card-custom-section {
+  .badge-mini-grid .badge-mini {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+// ==========================================
+// 触摸滑动支持
+// ==========================================
+.rtt-inner {
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  scroll-snap-type: x mandatory;
+  
+  .rtt-item {
+    scroll-snap-align: start;
+  }
+}
+
+.robotime-tag-nav {
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+}
+
+// ==========================================
+// 隐藏非必要元素
+// ==========================================
+.search-menu,
+.featured-categories,
+.c-navbar__full-page-button,
+.btn-sidebar-toggle {
+  display: none !important;
+}
+
+// ==========================================
+// 底部安全区域（iPhone X+）
+// ==========================================
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .guest-read-indicator {
+    bottom: calc(20px + env(safe-area-inset-bottom));
+  }
+  
+  .checkin-modal-overlay,
+  .guest-gate-modal {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
