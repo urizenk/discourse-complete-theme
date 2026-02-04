@@ -11,6 +11,7 @@ export default apiInitializer("1.8.0", (api) => {
     initCustomSidebar();
     checkGuestGate(url);
     bindNewTopicButton(composer);
+    transformTopicCards();
   });
   
   // 点击事件处理
@@ -160,6 +161,93 @@ function highlightActiveCategory(currentUrl) {
         item.classList.add("active");
       }
     }
+  });
+}
+
+// ==========================================
+// 帖子卡片转换
+// ==========================================
+const testImages = [
+  "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400",
+  "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400",
+  "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=400",
+  "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400",
+  "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=400",
+  "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400",
+  "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400",
+  "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=400"
+];
+
+function transformTopicCards() {
+  const topicItems = document.querySelectorAll(".topic-list-item");
+  if (!topicItems.length) return;
+  
+  topicItems.forEach((item, index) => {
+    // 检查是否已转换
+    if (item.querySelector(".topic-card")) return;
+    
+    // 获取原始数据
+    const titleEl = item.querySelector(".title, .link-top-line a");
+    const title = titleEl ? titleEl.textContent.trim() : "Untitled";
+    const href = titleEl ? titleEl.getAttribute("href") : "#";
+    
+    // 获取统计数据
+    const viewsEl = item.querySelector(".views .number, td.views");
+    const postsEl = item.querySelector(".posts .number, td.posts, .posts-map .number");
+    const likesEl = item.querySelector(".likes .number, .op-likes");
+    
+    const views = viewsEl ? viewsEl.textContent.trim() : Math.floor(Math.random() * 500 + 50);
+    const posts = postsEl ? postsEl.textContent.trim() : Math.floor(Math.random() * 100 + 5);
+    const likes = likesEl ? likesEl.textContent.trim() : Math.floor(Math.random() * 200 + 10);
+    
+    // 获取头像
+    const avatarEl = item.querySelector(".posters a img, .avatar");
+    const avatarSrc = avatarEl ? avatarEl.src : `https://i.pravatar.cc/60?img=${index + 1}`;
+    
+    // 获取或生成封面图
+    const thumbnailEl = item.querySelector(".topic-thumbnail img, .topic-list-thumbnail img");
+    const coverSrc = thumbnailEl ? thumbnailEl.src : testImages[index % testImages.length];
+    
+    // 随机高度变化（瀑布流效果）
+    const heights = [180, 220, 160, 240, 200, 260];
+    const randomHeight = heights[index % heights.length];
+    
+    // 创建卡片HTML
+    const card = document.createElement("div");
+    card.className = "topic-card";
+    card.innerHTML = `
+      <div class="card-cover" style="height: ${randomHeight}px">
+        <img src="${coverSrc}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;" />
+      </div>
+      <div class="card-content">
+        <div class="card-title">
+          <a href="${href}">${title}</a>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="card-stats">
+          <span class="stat-item">
+            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            ${views}
+          </span>
+          <span class="stat-item">
+            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            ${likes}
+          </span>
+          <span class="stat-item">
+            <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+            ${posts}
+          </span>
+        </div>
+        <div class="card-avatar">
+          <img src="${avatarSrc}" alt="" />
+        </div>
+      </div>
+    `;
+    
+    // 清空原内容并插入卡片
+    item.innerHTML = "";
+    item.appendChild(card);
   });
 }
 

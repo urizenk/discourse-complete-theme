@@ -77,26 +77,32 @@
 }
 
 // ==========================================
-// 帖子列表 - 单列
+// 帖子列表 - 移动端单列瀑布流
 // ==========================================
 .topic-list .topic-list-body {
-  grid-template-columns: 1fr !important;
-  gap: 12px;
+  column-count: 1 !important;
 }
 
 .topic-list .topic-list-item {
+  margin-bottom: 12px;
+  border-radius: 12px;
+}
 
-  .topic-thumbnail,
-  .topic-list-thumbnail {
-    height: 140px;
+.topic-card {
+  .card-cover {
+    max-height: 200px !important;
   }
 
-  .main-link {
+  .card-content {
     padding: 12px;
 
-    .link-top-line .title {
+    .card-title {
       font-size: 14px;
     }
+  }
+
+  .card-footer {
+    padding: 0 12px 12px;
   }
 }
 
