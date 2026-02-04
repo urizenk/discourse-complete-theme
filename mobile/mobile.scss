@@ -12,7 +12,7 @@
 // 第1层：品牌导航栏
 // ==========================================
 .robotime-brand-nav {
-  padding: 4px 12px;
+  padding: 6px 12px;
 
   .brand-logo {
     font-size: 12px;
@@ -20,7 +20,7 @@
   }
 
   .brand-links {
-    display: none; // 移动端隐藏链接
+    display: none;
   }
 }
 
@@ -29,32 +29,32 @@
 // ==========================================
 .robotime-category-nav {
   top: 50px !important;
-  padding: 8px 4px;
+  padding: 12px 8px;
 
   .nav-arrow {
-    width: 28px;
-    height: 28px;
-    margin: 0 4px;
+    width: 32px;
+    height: 32px;
+    margin: 0 6px;
   }
 
   .category-list {
-    gap: 8px;
+    gap: 12px;
   }
 
   .category-image {
-    width: 70px;
-    height: 50px;
-    border-radius: 6px;
+    width: 120px;
+    height: 75px;
+    border-radius: 8px;
   }
 
   .category-name {
-    font-size: 10px;
-    max-width: 70px;
+    font-size: 11px;
+    max-width: 120px;
   }
 
   &.shrink {
     .category-item {
-      padding: 4px 8px;
+      padding: 4px 10px;
     }
 
     .category-name {

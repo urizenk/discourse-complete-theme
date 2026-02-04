@@ -3,14 +3,14 @@
 // ==========================================
 
 // ==========================================
-// 第1层：品牌导航栏 (红色背景)
+// 第1层：品牌导航栏 (黑色背景)
 // ==========================================
 .robotime-brand-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #EE5A5A;
-  padding: 6px 20px;
+  background: #000;
+  padding: 8px 20px;
 
   .brand-logo {
     font-size: 14px;
@@ -18,21 +18,21 @@
     color: #fff;
     text-decoration: none;
     padding: 4px 12px;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 1px solid #fff;
     border-radius: 3px;
   }
 
   .brand-links {
     display: flex;
-    gap: 20px;
+    gap: 24px;
 
     a {
       color: #fff;
       text-decoration: none;
-      font-size: 12px;
+      font-size: 13px;
 
       &:hover {
-        text-decoration: underline;
+        opacity: 0.8;
       }
     }
   }
@@ -45,42 +45,47 @@
   display: flex;
   align-items: center;
   background: #000;
-  padding: 12px 8px;
+  padding: 20px 12px;
   position: sticky;
   top: 60px;
   z-index: 999;
 
   .nav-arrow {
     flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    background: rgba(255, 255, 255, 0.9);
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.95);
     border: none;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 8px;
-    transition: transform 0.2s;
+    margin: 0 12px;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 
     svg {
       fill: #333;
+      width: 24px;
+      height: 24px;
     }
 
     &:hover {
       transform: scale(1.1);
+      background: #fff;
     }
   }
 
   .category-list {
     display: flex;
-    gap: 12px;
+    gap: 20px;
     overflow-x: auto;
     scroll-behavior: smooth;
     flex: 1;
-    padding: 4px 0;
+    padding: 8px 0;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
 
     &::-webkit-scrollbar {
       display: none;
@@ -115,12 +120,12 @@
   }
 
   .category-image {
-    width: 100px;
-    height: 70px;
-    border-radius: 8px;
+    width: 160px;
+    height: 100px;
+    border-radius: 12px;
     overflow: hidden;
     background: #333;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     transition: box-shadow 0.2s;
 
     img {
@@ -131,10 +136,10 @@
   }
 
   .category-name {
-    font-size: 11px;
+    font-size: 12px;
     color: #fff;
     text-align: center;
-    max-width: 100px;
+    max-width: 160px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
