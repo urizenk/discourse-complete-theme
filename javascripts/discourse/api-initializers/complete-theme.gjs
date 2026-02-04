@@ -249,16 +249,27 @@ function onScroll() {
   }
 }
 
+let lastScrollTop = 0;
+let isShrunken = false;
+
 function updateNavOnScroll() {
   const nav = document.querySelector(".robotime-category-nav");
   if (nav) {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    // 滚动超过100px时收缩，回到50px以内恢复
-    if (scrollTop > 100) {
+    
+    // 使用更大的阈值间隔，避免抖动
+    // 向下滚动超过 150px 时收缩
+    if (!isShrunken && scrollTop > 150) {
       nav.classList.add("shrink");
-    } else if (scrollTop < 50) {
+      isShrunken = true;
+    } 
+    // 向上滚动回到顶部 30px 以内时恢复
+    else if (isShrunken && scrollTop < 30) {
       nav.classList.remove("shrink");
+      isShrunken = false;
     }
+    
+    lastScrollTop = scrollTop;
   }
   ticking = false;
 }
