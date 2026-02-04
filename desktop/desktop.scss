@@ -58,6 +58,17 @@
       color: #fff;
     }
   }
+
+  // 修改 "My posts" 为 "My Activity"
+  .sidebar-section-link[href="/my/activity"] .sidebar-section-link-content-text,
+  .sidebar-section-link[data-link-name="my-posts"] .sidebar-section-link-content-text {
+    font-size: 0;
+
+    &::after {
+      content: "My Activity";
+      font-size: 14px;
+    }
+  }
 }
 
 // 内容区域
@@ -81,13 +92,13 @@ body.has-sidebar-page .wrap {
 }
 
 // ==========================================
-// 左侧固定面板容器
+// 左侧活动面板 - 放在侧边栏下方
 // ==========================================
 .robotime-left-panel {
   position: fixed;
   left: 20px;
   bottom: 20px;
-  width: 220px;
+  width: 260px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
