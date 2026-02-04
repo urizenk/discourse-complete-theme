@@ -36,13 +36,13 @@
         opacity: 0.8;
       }
     }
-    
+
     .checkin-link {
       background: #228B22;
       padding: 6px 14px;
       border-radius: 16px;
       font-weight: 600;
-      
+
       &:hover {
         background: #1a6b1a;
         opacity: 1;
@@ -125,7 +125,7 @@
     &.active {
       transform: scale(1.1);
       z-index: 10;
-      
+
       .category-image {
         border: 3px solid #FFD700;
         box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
@@ -298,6 +298,18 @@
       &:hover {
         background: var(--primary-very-low);
       }
+      
+      &.profile-link {
+        background: linear-gradient(135deg, #3B82F6, #2563EB);
+        color: #fff;
+        border-radius: 6px;
+        margin: 4px 8px;
+        font-weight: 600;
+        
+        &:hover {
+          background: linear-gradient(135deg, #2563EB, #1D4ED8);
+        }
+      }
     }
   }
 
@@ -433,7 +445,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -447,7 +459,7 @@
   width: 90%;
   max-width: 400px;
   position: relative;
-  
+
   .modal-close {
     position: absolute;
     top: 12px;
@@ -457,32 +469,32 @@
     font-size: 24px;
     cursor: pointer;
     color: var(--primary-medium);
-    
+
     &:hover {
       color: var(--primary);
     }
   }
-  
+
   h2 {
     margin: 0 0 20px;
     font-size: 20px;
     font-weight: 600;
   }
-  
+
   h3 {
     margin: 16px 0 8px;
     font-size: 16px;
   }
-  
+
   .checkin-modal-content {
     text-align: center;
   }
-  
+
   .checked-text {
     color: #228B22;
     font-weight: 600;
   }
-  
+
   .checkin-action-btn {
     width: 100%;
     padding: 14px;
@@ -494,17 +506,17 @@
     font-weight: 600;
     cursor: pointer;
     margin: 16px 0;
-    
+
     &:hover {
       background: #1a6b1a;
     }
-    
+
     &:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
   }
-  
+
   .lottery-action-btn {
     width: 100%;
     padding: 12px;
@@ -516,39 +528,39 @@
     font-weight: 600;
     cursor: pointer;
     margin: 12px 0;
-    
+
     &:hover {
       background: #2563EB;
     }
-    
+
     &:disabled {
       opacity: 0.6;
     }
   }
-  
+
   .modal-stats {
     display: flex;
     justify-content: center;
     gap: 24px;
     margin: 20px 0;
-    
+
     .stat {
       text-align: center;
-      
+
       .value {
         display: block;
         font-size: 24px;
         font-weight: 700;
         color: var(--tertiary);
       }
-      
+
       .label {
         font-size: 12px;
         color: var(--primary-medium);
       }
     }
   }
-  
+
   .prize-won {
     background: #228B22;
     color: #fff;
@@ -570,7 +582,7 @@
   border-left: 4px solid #FF6B35;
   border-radius: 0 8px 8px 0;
   margin-bottom: 20px;
-  
+
   .category-icon {
     width: 48px;
     height: 48px;
@@ -582,35 +594,35 @@
     border-radius: 50%;
     color: #fff;
     font-size: 24px;
-    
+
     img {
       width: 32px;
       height: 32px;
       object-fit: contain;
     }
   }
-  
+
   .category-info {
     flex: 1;
-    
+
     .category-title {
       font-size: 18px;
       font-weight: 700;
       color: #333;
       margin: 0 0 4px 0;
     }
-    
+
     .category-desc {
       font-size: 14px;
       color: #666;
       margin: 0;
       line-height: 1.5;
-      
+
       a {
         color: #FF6B35;
         text-decoration: none;
         font-weight: 500;
-        
+
         &:hover {
           text-decoration: underline;
         }
@@ -630,7 +642,7 @@
   border-radius: 0 8px 8px 0;
   margin: 20px;
   margin-bottom: 20px;
-  
+
   .banner-icon {
     width: 48px;
     height: 48px;
@@ -643,7 +655,7 @@
     color: #fff;
     font-size: 24px;
     font-weight: 700;
-    
+
     img {
       width: 100%;
       height: 100%;
@@ -651,28 +663,28 @@
       border-radius: 50%;
     }
   }
-  
+
   .banner-content {
     flex: 1;
-    
+
     .banner-title {
       font-size: 18px;
       font-weight: 700;
       color: #333;
       margin: 0 0 4px 0;
     }
-    
+
     .banner-desc {
       font-size: 14px;
       color: #666;
       margin: 0;
       line-height: 1.5;
-      
+
       a {
         color: #FF6B35;
         text-decoration: none;
         font-weight: 500;
-        
+
         &:hover {
           text-decoration: underline;
         }

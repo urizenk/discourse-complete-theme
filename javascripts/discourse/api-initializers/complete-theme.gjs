@@ -9,7 +9,7 @@ export default apiInitializer("1.8.0", (api) => {
     initNavPosition();
     initCategoryClickHighlight();
     highlightActiveCategory(url);
-    initCustomSidebar();
+    initCustomSidebar(api);
     checkGuestGate(url);
     bindNewTopicButton(composer);
     transformTopicCards();
@@ -497,7 +497,7 @@ function transformTopicCards() {
 // ==========================================
 // 自定义侧边栏
 // ==========================================
-function initCustomSidebar() {
+function initCustomSidebar(api) {
   // 只在桌面端执行
   if (window.innerWidth <= 768) return;
   
@@ -510,14 +510,20 @@ function initCustomSidebar() {
   // 创建自定义侧边栏内容
   const customContent = document.createElement("div");
   customContent.className = "custom-sidebar-content";
+  // 获取当前用户名
+  const currentUser = api.getCurrentUser();
+  const username = currentUser ? currentUser.username : "";
+  const profileUrl = username ? `/u/${username}` : "/login";
+  
   customContent.innerHTML = `
     <div class="sidebar-section">
       <div class="sidebar-section-header">
-        <span class="sidebar-section-header-text">Topics</span>
+        <span class="sidebar-section-header-text">Menu</span>
       </div>
       <ul class="sidebar-section-links">
+        ${username ? `<li><a href="${profileUrl}" class="sidebar-link profile-link"><span>My Profile</span></a></li>` : ""}
         <li><a href="/my/activity" class="sidebar-link"><span>My Activity</span></a></li>
-        <li><a href="/my/messages" class="sidebar-link"><span>my messages</span></a></li>
+        <li><a href="/my/messages" class="sidebar-link"><span>My Messages</span></a></li>
         <li><a href="/my/invited" class="sidebar-link"><span>Invite Friends</span></a></li>
         <li><a href="/latest" class="sidebar-link"><span>Topics</span></a></li>
         <li><a href="/c/help" class="sidebar-link"><span>Help</span></a></li>
