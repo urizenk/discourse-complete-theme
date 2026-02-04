@@ -92,14 +92,26 @@ function updateHeader() {
 // Initialize navigation position
 function initNavPosition() {
   const header = document.querySelector(".d-header-wrap");
+  const headerNav = document.querySelector("#robotime-header-nav");
   const bar = document.querySelector("#robotime-tag-top");
   const tagNav = document.querySelector("#robotime-tag-nav");
   
-  if (header && bar && !bar.dataset.inserted) {
+  // 插入品牌导航栏（顶部第一行）
+  if (header && headerNav && !headerNav.dataset.inserted) {
+    header.insertAdjacentElement("afterend", headerNav);
+    headerNav.dataset.inserted = "true";
+  }
+  
+  // 插入版块导航栏
+  if (headerNav && bar && !bar.dataset.inserted) {
+    headerNav.insertAdjacentElement("afterend", bar);
+    bar.dataset.inserted = "true";
+  } else if (header && bar && !bar.dataset.inserted) {
     header.insertAdjacentElement("afterend", bar);
     bar.dataset.inserted = "true";
   }
   
+  // 插入标签导航栏
   if (bar && tagNav && !tagNav.dataset.inserted) {
     bar.insertAdjacentElement("afterend", tagNav);
     tagNav.dataset.inserted = "true";

@@ -14,15 +14,68 @@
 }
 
 // ==========================================
-// Top Navigation Bar
+// Header Navigation (Top Line - Brand)
+// ==========================================
+.robotime-header-nav {
+  background: #EE5A5A;
+  padding: 8px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1001;
+
+  .header-nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .brand-logo {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    letter-spacing: 1px;
+    padding: 6px 16px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+  }
+
+  .header-links {
+    display: flex;
+    gap: 24px;
+
+    a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0.9;
+      transition: opacity 0.2s;
+
+      &:hover {
+        opacity: 1;
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// ==========================================
+// Top Navigation Bar (Category Icons)
 // ==========================================
 .robotime-tag-top {
   display: flex;
   align-items: center;
   background: var(--rtt-bg);
-  padding: 12px 0;
+  padding: 16px 12px;
   position: sticky;
-  top: 60px;
+  top: 100px; // 考虑 header-nav + d-header
   z-index: 999;
   transition: all var(--rtt-transition);
 
@@ -73,11 +126,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 10px 16px;
-    min-width: 80px;
+    padding: 8px 12px;
+    min-width: 100px;
+    max-width: 120px;
     color: var(--rtt-text);
     text-decoration: none;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
     transition: all var(--rtt-transition);
     background: transparent;
@@ -139,13 +193,15 @@
     }
 
     .rtt-icon {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 6px;
+      width: 60px;
+      height: 60px;
+      margin-bottom: 8px;
       transition: transform 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
+      border-radius: 12px;
+      overflow: hidden;
 
       svg {
         width: 32px;
@@ -156,8 +212,21 @@
       img {
         width: 100%;
         height: 100%;
-        object-fit: contain;
-        border-radius: 8px;
+        object-fit: cover;
+        border-radius: 12px;
+      }
+
+      // 图片式图标
+      &.rtt-img {
+        .category-img {
+          width: 100%;
+          height: 100%;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 28px;
+        }
       }
     }
 
@@ -247,12 +316,12 @@
   border: 1px solid var(--primary-low);
   border-radius: 12px;
   margin-bottom: 20px;
-  
+
   .category-logo {
     width: 60px;
     height: 60px;
     flex-shrink: 0;
-    
+
     img {
       width: 100%;
       height: 100%;
@@ -260,11 +329,12 @@
       border-radius: 8px;
     }
   }
-  
+
   .category-title-description {
     flex: 1;
-    
-    h1, .category-name {
+
+    h1,
+    .category-name {
       font-size: 20px;
       font-weight: 700;
       color: var(--primary);
@@ -272,7 +342,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      
+
       .category-color {
         width: 12px;
         height: 12px;
@@ -280,17 +350,18 @@
         display: inline-block;
       }
     }
-    
-    .category-description, p {
+
+    .category-description,
+    p {
       font-size: 14px;
       color: var(--primary-medium);
       line-height: 1.6;
       margin: 0;
-      
+
       a {
         color: var(--tertiary);
         text-decoration: none;
-        
+
         &:hover {
           text-decoration: underline;
         }
@@ -309,7 +380,7 @@
   border-left: 4px solid #FF9800;
   border-radius: 8px;
   margin-bottom: 20px;
-  
+
   .banner-icon {
     width: 40px;
     height: 40px;
@@ -322,26 +393,26 @@
     font-size: 20px;
     flex-shrink: 0;
   }
-  
+
   .banner-content {
     flex: 1;
-    
+
     .banner-title {
       font-size: 16px;
       font-weight: 600;
       color: #333;
       margin: 0 0 4px 0;
     }
-    
+
     .banner-description {
       font-size: 13px;
       color: #666;
       margin: 0;
-      
+
       a {
         color: #FF9800;
         text-decoration: none;
-        
+
         &:hover {
           text-decoration: underline;
         }
@@ -1239,7 +1310,7 @@
   transform: translateX(-50%);
   z-index: 9999;
   animation: slideUp 0.3s ease;
-  
+
   .indicator-content {
     display: flex;
     align-items: center;
@@ -1250,17 +1321,17 @@
     border-radius: 30px;
     font-size: 13px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    
+
     svg {
       flex-shrink: 0;
     }
-    
+
     a {
       color: #FFD700;
       text-decoration: none;
       font-weight: 500;
       margin-left: 8px;
-      
+
       &:hover {
         text-decoration: underline;
       }
@@ -1274,7 +1345,7 @@
     left: 16px;
     right: 16px;
     transform: none;
-    
+
     .indicator-content {
       justify-content: center;
       flex-wrap: wrap;
