@@ -7,15 +7,25 @@ export default apiInitializer("1.8.0", (api) => {
   // 页面变化时初始化
   api.onPageChange((url) => {
     initNavPosition();
+    initCategoryClickHighlight();
     highlightActiveCategory(url);
     initCustomSidebar();
     checkGuestGate(url);
     bindNewTopicButton(composer);
     transformTopicCards();
+    enhanceCategoryBanner(url);
   });
   
   // 点击事件处理
   document.addEventListener("click", (e) => {
+    // 顶部签到按钮点击
+    const checkinBtn = e.target.closest("#nav-checkin-btn");
+    if (checkinBtn) {
+      e.preventDefault();
+      showCheckinModal();
+      return;
+    }
+    
     // NEW TOPIC 按钮点击
     const newTopicBtn = e.target.closest("#custom-new-topic-btn");
     if (newTopicBtn) {
@@ -97,6 +107,138 @@ function bindNewTopicButton(composer) {
   }
 }
 
+// 签到弹窗
+function showCheckinModal() {
+  // 检查用户是否登录
+  const currentUser = document.querySelector(".header-dropdown-toggle.current-user");
+  if (!currentUser) {
+    window.location.href = "/login";
+    return;
+  }
+  
+  // 如果弹窗已存在，直接显示
+  if (document.querySelector(".checkin-modal-overlay")) {
+    document.querySelector(".checkin-modal-overlay").style.display = "flex";
+    return;
+  }
+  
+  // 创建签到弹窗
+  const modal = document.createElement("div");
+  modal.className = "checkin-modal-overlay";
+  modal.innerHTML = `
+    <div class="checkin-modal">
+      <button class="modal-close">&times;</button>
+      <h2>Daily Check-in</h2>
+      <div class="checkin-modal-content">
+        <div id="checkin-status">Loading...</div>
+        <button id="do-checkin-btn" class="checkin-action-btn" style="display:none;">Check In Now</button>
+        <div id="checkin-stats" class="modal-stats"></div>
+        <div id="lottery-section" style="display:none;">
+          <h3>Lucky Draw</h3>
+          <p>You have a chance to draw!</p>
+          <button id="do-lottery-btn" class="lottery-action-btn">Draw Now</button>
+          <div id="lottery-result"></div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  // 关闭按钮
+  modal.querySelector(".modal-close").addEventListener("click", () => {
+    modal.style.display = "none";
+  });
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.style.display = "none";
+  });
+  
+  // 加载签到状态
+  loadCheckinStatus();
+}
+
+// 加载签到状态
+async function loadCheckinStatus() {
+  try {
+    const response = await fetch("/custom-plugin/checkin");
+    const data = await response.json();
+    
+    const statusEl = document.getElementById("checkin-status");
+    const btnEl = document.getElementById("do-checkin-btn");
+    const statsEl = document.getElementById("checkin-stats");
+    const lotteryEl = document.getElementById("lottery-section");
+    
+    if (data.checked_in_today) {
+      statusEl.innerHTML = `<span class="checked-text">Checked in today! (+${data.today_checkin?.points_earned || 10} points)</span>`;
+      btnEl.style.display = "none";
+      
+      // 检查抽奖状态
+      const lotteryRes = await fetch("/custom-plugin/checkin/lottery");
+      const lotteryData = await lotteryRes.json();
+      
+      if (lotteryData.can_draw) {
+        lotteryEl.style.display = "block";
+        document.getElementById("do-lottery-btn").addEventListener("click", doLotteryDraw);
+      } else if (lotteryData.today_prize) {
+        lotteryEl.style.display = "block";
+        document.getElementById("do-lottery-btn").style.display = "none";
+        document.getElementById("lottery-result").innerHTML = `<p>Today's prize: ${lotteryData.today_prize}</p>`;
+      }
+    } else {
+      statusEl.innerHTML = `<span>You haven't checked in today</span>`;
+      btnEl.style.display = "block";
+      btnEl.addEventListener("click", doCheckin);
+    }
+    
+    statsEl.innerHTML = `
+      <div class="stat"><span class="value">${data.stats?.total_checkins || 0}</span><span class="label">Total</span></div>
+      <div class="stat"><span class="value">${data.stats?.total_points || 0}</span><span class="label">Points</span></div>
+      <div class="stat"><span class="value">${data.consecutive_days || 0}</span><span class="label">Streak</span></div>
+    `;
+  } catch (error) {
+    document.getElementById("checkin-status").innerHTML = "Failed to load";
+  }
+}
+
+// 执行签到
+async function doCheckin() {
+  const btn = document.getElementById("do-checkin-btn");
+  btn.disabled = true;
+  btn.textContent = "Checking in...";
+  
+  try {
+    const response = await fetch("/custom-plugin/checkin", { method: "POST" });
+    const data = await response.json();
+    
+    if (data.success) {
+      loadCheckinStatus();
+    }
+  } catch (error) {
+    btn.disabled = false;
+    btn.textContent = "Check In Now";
+  }
+}
+
+// 执行抽奖
+async function doLotteryDraw() {
+  const btn = document.getElementById("do-lottery-btn");
+  btn.disabled = true;
+  btn.textContent = "Drawing...";
+  
+  try {
+    const response = await fetch("/custom-plugin/checkin/draw", { method: "POST" });
+    const data = await response.json();
+    
+    if (data.success) {
+      btn.style.display = "none";
+      document.getElementById("lottery-result").innerHTML = `<p class="prize-won">You won: ${data.prize}</p>`;
+    }
+  } catch (error) {
+    btn.disabled = false;
+    btn.textContent = "Draw Now";
+  }
+}
+
 // 滚动节流
 let ticking = false;
 
@@ -156,12 +298,102 @@ function highlightActiveCategory(currentUrl) {
     if (href) {
       // 提取版块slug进行匹配
       const categorySlug = href.replace("/c/", "").split("/")[0];
-      if (currentUrl.includes(`/c/${categorySlug}`) || 
-          currentUrl.includes(`/c/${categorySlug}/`)) {
+      // 支持多种URL格式: /c/slug, /c/slug/123, /c/slug/all 等
+      const urlParts = currentUrl.split("/");
+      const cIndex = urlParts.indexOf("c");
+      if (cIndex !== -1 && urlParts[cIndex + 1] === categorySlug) {
         item.classList.add("active");
       }
     }
   });
+}
+
+// 初始化分类点击高亮
+function initCategoryClickHighlight() {
+  const items = document.querySelectorAll(".category-item");
+  items.forEach((item) => {
+    item.addEventListener("click", function(e) {
+      // 移除所有active
+      items.forEach((i) => i.classList.remove("active"));
+      // 添加到当前项
+      this.classList.add("active");
+    });
+  });
+}
+
+// ==========================================
+// 版块描述横幅
+// ==========================================
+function enhanceCategoryBanner(url) {
+  // 只在版块页面显示
+  if (!url.includes("/c/")) return;
+  
+  // 延迟执行，等待页面加载
+  setTimeout(() => {
+    // 获取版块信息
+    const categoryNameEl = document.querySelector(".category-name, .category-heading h1, .category-breadcrumb .category-name");
+    const categoryDescEl = document.querySelector(".category-description, .category-heading p");
+    
+    if (!categoryNameEl) return;
+    
+    // 如果已有横幅，更新内容
+    let banner = document.querySelector(".custom-category-banner");
+    if (banner) {
+      updateBannerContent(banner, categoryNameEl, categoryDescEl);
+      return;
+    }
+    
+    // 查找插入位置
+    const mainOutlet = document.querySelector("#main-outlet .container, #main-outlet");
+    if (!mainOutlet) return;
+    
+    // 创建横幅
+    banner = document.createElement("div");
+    banner.className = "custom-category-banner";
+    
+    const categoryName = categoryNameEl.textContent.trim();
+    const categoryDesc = categoryDescEl ? categoryDescEl.innerHTML : "";
+    
+    // 获取版块图标
+    const categoryLogo = document.querySelector(".category-logo img");
+    const logoUrl = categoryLogo ? categoryLogo.src : "";
+    
+    banner.innerHTML = `
+      <div class="banner-icon">
+        ${logoUrl ? `<img src="${logoUrl}" alt="" />` : '<span>?</span>'}
+      </div>
+      <div class="banner-content">
+        <h2 class="banner-title">${categoryName}</h2>
+        <p class="banner-desc">${categoryDesc || "Welcome to this category"}</p>
+      </div>
+    `;
+    
+    // 插入横幅
+    const firstChild = mainOutlet.querySelector(".navigation-container, .category-heading, .topic-list");
+    if (firstChild) {
+      firstChild.parentNode.insertBefore(banner, firstChild);
+    } else {
+      mainOutlet.insertBefore(banner, mainOutlet.firstChild);
+    }
+    
+    // 隐藏原有的category-heading
+    const originalHeading = document.querySelector(".category-heading");
+    if (originalHeading) {
+      originalHeading.style.display = "none";
+    }
+  }, 100);
+}
+
+function updateBannerContent(banner, nameEl, descEl) {
+  const title = banner.querySelector(".banner-title");
+  const desc = banner.querySelector(".banner-desc");
+  
+  if (title && nameEl) {
+    title.textContent = nameEl.textContent.trim();
+  }
+  if (desc && descEl) {
+    desc.innerHTML = descEl.innerHTML;
+  }
 }
 
 // ==========================================

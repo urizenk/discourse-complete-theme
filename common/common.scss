@@ -25,6 +25,7 @@
   .brand-links {
     display: flex;
     gap: 24px;
+    align-items: center;
 
     a {
       color: #fff;
@@ -33,6 +34,18 @@
 
       &:hover {
         opacity: 0.8;
+      }
+    }
+    
+    .checkin-link {
+      background: #228B22;
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-weight: 600;
+      
+      &:hover {
+        background: #1a6b1a;
+        opacity: 1;
       }
     }
   }
@@ -109,14 +122,18 @@
     }
 
     &.active {
+      transform: scale(1.1);
+      z-index: 10;
+      
       .category-image {
         border: 3px solid #FFD700;
-        box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
       }
 
       .category-name {
         color: #FFD700;
-        font-weight: 600;
+        font-weight: 700;
+        text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
       }
     }
   }
@@ -168,10 +185,12 @@
 
       &.active {
         background: #FFD700;
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
 
         .category-name {
           color: #000;
-          font-weight: 600;
+          font-weight: 700;
         }
       }
     }
@@ -403,28 +422,288 @@
 }
 
 // ==========================================
-// Category Description Banner
+// 签到弹窗样式
 // ==========================================
+.checkin-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.checkin-modal {
+  background: var(--secondary);
+  border-radius: 16px;
+  padding: 24px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+  
+  .modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--primary-medium);
+    
+    &:hover {
+      color: var(--primary);
+    }
+  }
+  
+  h2 {
+    margin: 0 0 20px;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  
+  h3 {
+    margin: 16px 0 8px;
+    font-size: 16px;
+  }
+  
+  .checkin-modal-content {
+    text-align: center;
+  }
+  
+  .checked-text {
+    color: #228B22;
+    font-weight: 600;
+  }
+  
+  .checkin-action-btn {
+    width: 100%;
+    padding: 14px;
+    background: #228B22;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 16px 0;
+    
+    &:hover {
+      background: #1a6b1a;
+    }
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+  
+  .lottery-action-btn {
+    width: 100%;
+    padding: 12px;
+    background: #3B82F6;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 12px 0;
+    
+    &:hover {
+      background: #2563EB;
+    }
+    
+    &:disabled {
+      opacity: 0.6;
+    }
+  }
+  
+  .modal-stats {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin: 20px 0;
+    
+    .stat {
+      text-align: center;
+      
+      .value {
+        display: block;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--tertiary);
+      }
+      
+      .label {
+        font-size: 12px;
+        color: var(--primary-medium);
+      }
+    }
+  }
+  
+  .prize-won {
+    background: #228B22;
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+}
+
+// ==========================================
+// Category Description Banner - 按设计稿样式
+// ==========================================
+.category-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #FFF5F0;
+  border-left: 4px solid #FF6B35;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 20px;
+  
+  .category-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FF6B35;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 24px;
+    
+    img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+  }
+  
+  .category-info {
+    flex: 1;
+    
+    .category-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #333;
+      margin: 0 0 4px 0;
+    }
+    
+    .category-desc {
+      font-size: 14px;
+      color: #666;
+      margin: 0;
+      line-height: 1.5;
+      
+      a {
+        color: #FF6B35;
+        text-decoration: none;
+        font-weight: 500;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+// 自定义版块横幅 - 按设计稿
+.custom-category-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #FFF5F0;
+  border-left: 4px solid #FF6B35;
+  border-radius: 0 8px 8px 0;
+  margin: 20px;
+  margin-bottom: 20px;
+  
+  .banner-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FF6B35;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 700;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
+  
+  .banner-content {
+    flex: 1;
+    
+    .banner-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #333;
+      margin: 0 0 4px 0;
+    }
+    
+    .banner-desc {
+      font-size: 14px;
+      color: #666;
+      margin: 0;
+      line-height: 1.5;
+      
+      a {
+        color: #FF6B35;
+        text-decoration: none;
+        font-weight: 500;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+// Discourse原有的category-heading适配
 .category-heading {
   display: flex !important;
-  align-items: flex-start;
+  align-items: center;
   gap: 16px;
-  padding: 20px 24px;
-  background: var(--secondary);
-  border: 1px solid var(--primary-low);
-  border-radius: 12px;
+  padding: 16px 20px;
+  background: #FFF5F0;
+  border-left: 4px solid #FF6B35;
+  border-radius: 0 8px 8px 0;
   margin-bottom: 20px;
 
   .category-logo {
-    width: 60px;
-    height: 60px;
+    width: 48px;
+    height: 48px;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FF6B35;
+    border-radius: 50%;
+    overflow: hidden;
 
     img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      border-radius: 8px;
+      object-fit: cover;
     }
   }
 
@@ -433,32 +712,30 @@
 
     h1,
     .category-name {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
-      color: var(--primary);
-      margin: 0 0 8px 0;
+      color: #333;
+      margin: 0 0 4px 0;
       display: flex;
       align-items: center;
       gap: 8px;
 
       .category-color {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        display: inline-block;
+        display: none;
       }
     }
 
     .category-description,
     p {
       font-size: 14px;
-      color: var(--primary-medium);
-      line-height: 1.6;
+      color: #666;
+      line-height: 1.5;
       margin: 0;
 
       a {
-        color: var(--tertiary);
+        color: #FF6B35;
         text-decoration: none;
+        font-weight: 500;
 
         &:hover {
           text-decoration: underline;
