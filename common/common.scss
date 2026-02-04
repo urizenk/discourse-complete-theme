@@ -127,23 +127,6 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-
-      // 图片未加载时显示占位
-      &[src=""] {
-        display: none;
-      }
-    }
-
-    // 占位背景
-    &:has(img[src=""]) {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      &::after {
-        content: "📷";
-        font-size: 24px;
-      }
     }
   }
 

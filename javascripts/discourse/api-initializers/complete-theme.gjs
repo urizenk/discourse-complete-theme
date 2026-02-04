@@ -157,14 +157,18 @@ function initCustomSidebar() {
       </div>
       <div class="widget-carousel">
         <div class="carousel-slide active">
-          <div class="slide-placeholder">Event Banner 1</div>
+          <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=300&h=150&fit=crop" alt="Event 1" />
         </div>
         <div class="carousel-slide">
-          <div class="slide-placeholder">Event Banner 2</div>
+          <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=300&h=150&fit=crop" alt="Event 2" />
+        </div>
+        <div class="carousel-slide">
+          <img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=300&h=150&fit=crop" alt="Event 3" />
         </div>
         <div class="carousel-dots">
           <span class="dot active" data-index="0"></span>
           <span class="dot" data-index="1"></span>
+          <span class="dot" data-index="2"></span>
         </div>
       </div>
       <a href="/c/events" class="widget-link">View All Events</a>
