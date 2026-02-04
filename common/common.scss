@@ -378,10 +378,34 @@
       border-color: var(--tertiary);
     }
 
-    // 隐藏不需要的列
-    .posters,
+    // 隐藏不需要的列，但保留发帖人头像
     .activity {
       display: none !important;
+    }
+
+    // 发帖人头像 - 显示在右下角
+    .posters {
+      display: flex !important;
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      width: auto !important;
+
+      a {
+        display: block;
+
+        &:not(:first-child) {
+          display: none; // 只显示第一个（发帖人）
+        }
+
+        img.avatar {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          border: 2px solid #fff;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+      }
     }
 
     // 重新布局主链接区域
@@ -417,6 +441,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
+        padding-bottom: 36px; // 为底部统计数据留空间
 
         .badge-wrapper {
           display: none; // 隐藏分类标签
@@ -424,65 +449,75 @@
       }
     }
 
-    // 帖子封面图
+    // 帖子封面图 - 完整显示不裁剪
     .topic-thumbnail {
       width: 100%;
-      height: 160px;
+      max-height: 180px;
       overflow: hidden;
       order: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary-very-low);
 
       img {
         width: 100%;
-        height: 100%;
-        object-fit: cover;
+        height: auto;
+        max-height: 180px;
+        object-fit: contain;
         transition: transform 0.3s ease;
       }
 
       &:hover img {
-        transform: scale(1.05);
+        transform: scale(1.02);
       }
     }
 
-    // 显示点赞数、评论数、时间 - 底部统计栏
-    .topic-stats-row {
-      display: flex !important;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 16px;
-      border-top: 1px solid var(--primary-low);
-      font-size: 12px;
-      color: var(--primary-medium);
-      order: 3;
 
-      .stats-left {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-
-        .stat-item {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-
-          svg {
-            width: 14px;
-            height: 14px;
-            fill: currentColor;
-          }
-        }
-      }
-
-      .stats-right {
-        .time-ago {
-          color: var(--primary-low-mid);
-        }
-      }
-    }
-
-    // 兼容原有的统计数据显示
+    // 帖子统计数据 - 显示在左下角
     .posts,
     .views {
-      display: none !important;
+      display: flex !important;
+      position: absolute;
+      bottom: 12px;
+      left: 16px;
+      font-size: 12px;
+      color: var(--primary-medium);
+      align-items: center;
+      gap: 4px;
+      width: auto !important;
+
+      .number {
+        font-weight: 500;
+      }
+    }
+
+    .posts {
+      left: 16px;
+
+      &::before {
+        content: "";
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z'/%3E%3C/svg%3E");
+        background-size: contain;
+        margin-right: 2px;
+      }
+    }
+
+    .views {
+      left: 70px;
+
+      &::before {
+        content: "";
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z'/%3E%3C/svg%3E");
+        background-size: contain;
+        margin-right: 2px;
+      }
     }
   }
 }
