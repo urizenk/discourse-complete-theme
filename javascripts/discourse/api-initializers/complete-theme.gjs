@@ -3,275 +3,209 @@ import { apiInitializer } from "discourse/lib/api";
 export default apiInitializer("1.8.0", (api) => {
   const router = api.container.lookup("router:main");
   
-  // Initialize on page change
+  // 页面变化时初始化
   api.onPageChange((url) => {
     initNavPosition();
     highlightActiveCategory(url);
-    highlightActiveTag(url);
-    initFloatingWidgets();
+    initCustomSidebar();
     checkGuestGate(url);
-    enhanceCategoryBanner();
   });
   
-  // Navigation item click handlers
+  // 点击事件处理
   document.addEventListener("click", (e) => {
-    // Category navigation click
-    const item = e.target.closest(".rtt-item");
-    if (item) {
+    // 版块导航点击
+    const categoryItem = e.target.closest(".category-item");
+    if (categoryItem) {
       e.preventDefault();
-      
-      // 签到按钮特殊处理
-      if (item.dataset.action === "checkin") {
-        showCheckinModal();
-        return;
-      }
-      
-      const url = item.dataset.url;
-      if (url) {
-        router.transitionTo(url);
+      const href = categoryItem.getAttribute("href");
+      if (href) {
+        router.transitionTo(href);
       }
       return;
     }
     
-    // Tag navigation click
-    const tagItem = e.target.closest(".tag-nav-item");
+    // 标签导航点击
+    const tagItem = e.target.closest(".tag-item");
     if (tagItem) {
       e.preventDefault();
       const href = tagItem.getAttribute("href");
       if (href) {
         router.transitionTo(href);
       }
+      return;
     }
     
-    // Left arrow
-    const leftArrow = e.target.closest(".rtt-arrow-left");
+    // 左箭头
+    const leftArrow = e.target.closest(".nav-arrow-left");
     if (leftArrow) {
-      const container = document.querySelector(".rtt-inner");
+      const container = document.querySelector(".category-list");
       if (container) {
         container.scrollBy({ left: -200, behavior: "smooth" });
       }
     }
     
-    // Right arrow
-    const rightArrow = e.target.closest(".rtt-arrow-right");
+    // 右箭头
+    const rightArrow = e.target.closest(".nav-arrow-right");
     if (rightArrow) {
-      const container = document.querySelector(".rtt-inner");
+      const container = document.querySelector(".category-list");
       if (container) {
         container.scrollBy({ left: 200, behavior: "smooth" });
       }
     }
   });
   
-  // Scroll listener
+  // 滚动监听
   window.addEventListener("scroll", onScroll, { passive: true });
 });
 
-// Scroll throttle
+// 滚动节流
 let ticking = false;
 
 function onScroll() {
   if (!ticking) {
-    requestAnimationFrame(updateHeader);
+    requestAnimationFrame(updateNavOnScroll);
     ticking = true;
   }
 }
 
-function updateHeader() {
-  const bar = document.querySelector("#robotime-tag-top");
-  if (bar) {
+function updateNavOnScroll() {
+  const nav = document.querySelector(".robotime-category-nav");
+  if (nav) {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     if (scrollTop > 200) {
-      bar.classList.add("hideImg");
-    } else if (scrollTop < 120) {
-      bar.classList.remove("hideImg");
+      nav.classList.add("shrink");
+    } else if (scrollTop < 100) {
+      nav.classList.remove("shrink");
     }
   }
   ticking = false;
 }
 
-// Initialize navigation position
+// 初始化导航栏位置
 function initNavPosition() {
   const header = document.querySelector(".d-header-wrap");
-  const headerNav = document.querySelector("#robotime-header-nav");
-  const bar = document.querySelector("#robotime-tag-top");
+  const brandNav = document.querySelector("#robotime-brand-nav");
+  const categoryNav = document.querySelector("#robotime-category-nav");
   const tagNav = document.querySelector("#robotime-tag-nav");
   
-  // 插入品牌导航栏（顶部第一行）
-  if (header && headerNav && !headerNav.dataset.inserted) {
-    header.insertAdjacentElement("afterend", headerNav);
-    headerNav.dataset.inserted = "true";
+  // 插入品牌导航栏
+  if (header && brandNav && !brandNav.dataset.inserted) {
+    header.insertAdjacentElement("afterend", brandNav);
+    brandNav.dataset.inserted = "true";
   }
   
   // 插入版块导航栏
-  if (headerNav && bar && !bar.dataset.inserted) {
-    headerNav.insertAdjacentElement("afterend", bar);
-    bar.dataset.inserted = "true";
-  } else if (header && bar && !bar.dataset.inserted) {
-    header.insertAdjacentElement("afterend", bar);
-    bar.dataset.inserted = "true";
+  if (brandNav && categoryNav && !categoryNav.dataset.inserted) {
+    brandNav.insertAdjacentElement("afterend", categoryNav);
+    categoryNav.dataset.inserted = "true";
   }
   
   // 插入标签导航栏
-  if (bar && tagNav && !tagNav.dataset.inserted) {
-    bar.insertAdjacentElement("afterend", tagNav);
+  if (categoryNav && tagNav && !tagNav.dataset.inserted) {
+    categoryNav.insertAdjacentElement("afterend", tagNav);
     tagNav.dataset.inserted = "true";
   }
 }
 
-// Highlight active category
+// 高亮当前版块
 function highlightActiveCategory(currentUrl) {
-  const items = document.querySelectorAll(".rtt-item");
-  items.forEach((item) => {
-    item.classList.remove("active");
-    const category = item.dataset.category;
-    const itemUrl = item.dataset.url;
-    
-    if (category === "home" && (currentUrl === "/" || currentUrl === "")) {
-      item.classList.add("active");
-    } else if (category && category !== "home") {
-      if (currentUrl.includes(`/c/${category}`) || currentUrl.includes(itemUrl)) {
-        item.classList.add("active");
-      }
-    }
-  });
-}
-
-// Highlight active tag
-function highlightActiveTag(currentUrl) {
-  const items = document.querySelectorAll(".tag-nav-item");
+  const items = document.querySelectorAll(".category-item");
   items.forEach((item) => {
     item.classList.remove("active");
     const href = item.getAttribute("href");
-    if (href && currentUrl.includes(href) && href !== "/tags") {
+    if (href && currentUrl.includes(href)) {
       item.classList.add("active");
     }
   });
 }
 
-// Enhance category banner display
-function enhanceCategoryBanner() {
-  // Wait for DOM to be ready
-  setTimeout(() => {
-    const categoryBox = document.querySelector(".category-box, .category-heading");
-    if (!categoryBox) return;
+// ==========================================
+// 自定义侧边栏
+// ==========================================
+function initCustomSidebar() {
+  // 只在桌面端执行
+  if (window.innerWidth <= 768) return;
+  
+  // 检查是否已初始化
+  if (document.querySelector(".custom-sidebar-content")) return;
+  
+  const sidebar = document.querySelector(".sidebar-wrapper .sidebar-sections");
+  if (!sidebar) return;
+  
+  // 创建自定义侧边栏内容
+  const customContent = document.createElement("div");
+  customContent.className = "custom-sidebar-content";
+  customContent.innerHTML = `
+    <div class="sidebar-section">
+      <div class="sidebar-section-header">
+        <span class="sidebar-section-header-text">Topics</span>
+      </div>
+      <ul class="sidebar-section-links">
+        <li><a href="/my/activity" class="sidebar-link"><span>My Posts</span></a></li>
+        <li><a href="/my/messages" class="sidebar-link"><span>my messages</span></a></li>
+        <li><a href="/my/invited" class="sidebar-link"><span>Invite Friends</span></a></li>
+        <li><a href="/latest" class="sidebar-link"><span>Topics</span></a></li>
+        <li><a href="/c/help" class="sidebar-link"><span>Help</span></a></li>
+        <li><a href="/c/how-to" class="sidebar-link"><span>How To</span></a></li>
+        <li><a href="/badges" class="sidebar-link"><span>Badges</span></a></li>
+      </ul>
+    </div>
     
-    // Add enhanced class if not already present
-    if (!categoryBox.classList.contains("enhanced")) {
-      categoryBox.classList.add("enhanced");
-    }
+    <div class="sidebar-activity-widget">
+      <div class="widget-header">
+        <span>Official Events</span>
+      </div>
+      <div class="widget-carousel">
+        <div class="carousel-slide active">
+          <div class="slide-placeholder">Event Banner 1</div>
+        </div>
+        <div class="carousel-slide">
+          <div class="slide-placeholder">Event Banner 2</div>
+        </div>
+        <div class="carousel-dots">
+          <span class="dot active" data-index="0"></span>
+          <span class="dot" data-index="1"></span>
+        </div>
+      </div>
+      <a href="/c/events" class="widget-link">View All Events</a>
+    </div>
     
-    // Ensure description is visible
-    const description = categoryBox.querySelector(".category-description, .category-box-description");
-    if (description) {
-      description.style.display = "block";
-    }
-  }, 100);
-}
-
-// Initialize floating widgets
-function initFloatingWidgets() {
-  // Check if already initialized
-  if (document.querySelector(".robotime-left-panel")) {
-    return;
-  }
-  
-  // Only on desktop
-  if (window.innerWidth <= 768) {
-    return;
-  }
-  
-  // Create left panel container
-  const panel = document.createElement("div");
-  panel.className = "robotime-left-panel";
-  
-  // Add activity widget
-  const widget = createActivityWidgetElement();
-  panel.appendChild(widget);
-  
-  // Add NEW TOPIC button for logged-in users
-  const currentUser = document.querySelector(".header-dropdown-toggle.current-user");
-  if (currentUser) {
-    const fab = createFloatingButtonElement();
-    panel.appendChild(fab);
-  }
-  
-  document.body.appendChild(panel);
-  
-  // Initialize carousel
-  initCarousel(widget);
-}
-
-function createFloatingButtonElement() {
-  const fab = document.createElement("button");
-  fab.className = "robotime-fab";
-  fab.innerHTML = `
-    <svg class="fab-icon" viewBox="0 0 24 24">
-      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-    </svg>
-    <span class="fab-text">NEW TOPIC</span>
-  `;
-  
-  fab.addEventListener("click", () => {
-    const createBtn = document.querySelector("#create-topic");
-    if (createBtn) {
-      createBtn.click();
-    } else {
-      window.location.href = "/new-topic";
-    }
-  });
-  
-  return fab;
-}
-
-function createActivityWidgetElement() {
-  const widget = document.createElement("div");
-  widget.className = "robotime-activity-widget";
-  widget.innerHTML = `
-    <div class="widget-header">
-      <svg viewBox="0 0 24 24">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+    <button class="sidebar-new-topic-btn" onclick="document.querySelector('#create-topic')?.click()">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
       </svg>
-      Official Events
-    </div>
-    <div class="carousel">
-      <div class="slide active">
-        <div style="width:100%;height:100%;background:#228B22;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;">Event Banner 1</div>
-      </div>
-      <div class="slide">
-        <div style="width:100%;height:100%;background:#1E90FF;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;">Event Banner 2</div>
-      </div>
-      <div class="dots">
-        <button class="dot active" data-index="0"></button>
-        <button class="dot" data-index="1"></button>
-      </div>
-    </div>
-    <a href="/latest" class="widget-link">View All Events</a>
+      NEW TOPIC
+    </button>
   `;
   
-  return widget;
+  // 隐藏原有内容，插入自定义内容
+  sidebar.style.display = "none";
+  sidebar.parentNode.insertBefore(customContent, sidebar);
+  
+  // 启动轮播
+  initSidebarCarousel();
 }
 
-function initCarousel(widget) {
-  const slides = widget.querySelectorAll(".slide");
-  const dots = widget.querySelectorAll(".dot");
+// 侧边栏轮播
+function initSidebarCarousel() {
+  const slides = document.querySelectorAll(".widget-carousel .carousel-slide");
+  const dots = document.querySelectorAll(".widget-carousel .dot");
+  if (slides.length === 0) return;
+  
   let currentIndex = 0;
   
   function showSlide(index) {
-    slides.forEach((slide, i) => {
-      slide.classList.toggle("active", i === index);
-    });
-    dots.forEach((dot, i) => {
-      dot.classList.toggle("active", i === index);
-    });
+    slides.forEach((s, i) => s.classList.toggle("active", i === index));
+    dots.forEach((d, i) => d.classList.toggle("active", i === index));
   }
   
-  // Auto carousel
+  // 自动轮播
   setInterval(() => {
     currentIndex = (currentIndex + 1) % slides.length;
     showSlide(currentIndex);
   }, 4000);
   
-  // Dot click
+  // 点击切换
   dots.forEach((dot) => {
     dot.addEventListener("click", () => {
       currentIndex = parseInt(dot.dataset.index);
@@ -280,202 +214,54 @@ function initCarousel(widget) {
   });
 }
 
-// Responsive handling
-window.addEventListener("resize", () => {
-  const panel = document.querySelector(".robotime-left-panel");
-  
-  if (window.innerWidth <= 768) {
-    if (panel) panel.style.display = "none";
-  } else {
-    if (panel) panel.style.display = "flex";
-  }
-});
-
 // ==========================================
-// Check-in Modal - 签到弹窗
+// 访客阅读限制
 // ==========================================
-
-function showCheckinModal() {
-  // 检查是否已登录
-  const currentUser = document.querySelector(".header-dropdown-toggle.current-user");
-  if (!currentUser) {
-    // 未登录，跳转到登录页
-    window.location.href = "/login";
-    return;
-  }
-  
-  // 创建签到弹窗
-  const existingModal = document.querySelector(".checkin-modal-overlay");
-  if (existingModal) {
-    existingModal.remove();
-  }
-  
-  const modal = document.createElement("div");
-  modal.className = "checkin-modal-overlay";
-  modal.innerHTML = `
-    <div class="checkin-modal">
-      <div class="checkin-modal-header">
-        <h3>Daily Check-in</h3>
-        <button class="close-btn">&times;</button>
-      </div>
-      <div class="checkin-modal-body">
-        <div class="checkin-loading">Loading...</div>
-      </div>
-    </div>
-  `;
-  
-  document.body.appendChild(modal);
-  
-  // 关闭按钮
-  modal.querySelector(".close-btn").addEventListener("click", () => {
-    modal.remove();
-  });
-  
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      modal.remove();
-    }
-  });
-  
-  // 加载签到数据
-  loadCheckinData(modal);
-}
-
-async function loadCheckinData(modal) {
-  try {
-    const response = await fetch("/custom-plugin/checkin");
-    const data = await response.json();
-    
-    const body = modal.querySelector(".checkin-modal-body");
-    
-    if (data.checked_in_today) {
-      body.innerHTML = `
-        <div class="checkin-success">
-          <div class="check-icon">✓</div>
-          <h4>Already Checked In Today!</h4>
-          <p>Streak: ${data.consecutive_days} days</p>
-          <div class="checkin-stats-mini">
-            <span>Total: ${data.stats?.total_checkins || 0}</span>
-            <span>Points: ${data.stats?.total_points || 0}</span>
-          </div>
-        </div>
-      `;
-    } else {
-      body.innerHTML = `
-        <div class="checkin-prompt">
-          <div class="streak-info">Current Streak: ${data.consecutive_days} days</div>
-          <button class="checkin-now-btn">Check In Now</button>
-          <p class="checkin-hint">Check in daily for bonus points!</p>
-        </div>
-      `;
-      
-      body.querySelector(".checkin-now-btn").addEventListener("click", async () => {
-        const btn = body.querySelector(".checkin-now-btn");
-        btn.disabled = true;
-        btn.textContent = "Checking in...";
-        
-        try {
-          const res = await fetch("/custom-plugin/checkin", { method: "POST" });
-          const result = await res.json();
-          
-          if (result.success) {
-            body.innerHTML = `
-              <div class="checkin-success">
-                <div class="check-icon animated">✓</div>
-                <h4>Check-in Successful!</h4>
-                <p>+${result.checkin?.points_earned || 10} points</p>
-                <p>Streak: ${result.consecutive_days} days</p>
-                <div class="lottery-prompt">
-                  <p>You earned a lucky draw chance!</p>
-                  <button class="lottery-btn">Try Your Luck</button>
-                </div>
-              </div>
-            `;
-            
-            body.querySelector(".lottery-btn")?.addEventListener("click", () => {
-              modal.remove();
-              // 跳转到个人资料页签到面板
-              const username = document.querySelector(".header-dropdown-toggle.current-user .avatar")?.title;
-              if (username) {
-                window.location.href = `/u/${username}/preferences`;
-              }
-            });
-          }
-        } catch (err) {
-          btn.textContent = "Error, try again";
-          btn.disabled = false;
-        }
-      });
-    }
-  } catch (error) {
-    modal.querySelector(".checkin-modal-body").innerHTML = `
-      <div class="checkin-error">
-        <p>Failed to load check-in data</p>
-        <button onclick="this.closest('.checkin-modal-overlay').remove()">Close</button>
-      </div>
-    `;
-  }
-}
-
-// ==========================================
-// Guest Gate - 访客登录弹窗
-// ==========================================
-
 const GUEST_GATE_CONFIG = {
-  maxViews: 3,                    // 最大浏览次数
-  readTimeLimit: 180,             // 阅读时间限制（秒）- 3分钟
-  storageKey: "guest_topic_views", // localStorage 键名
-  timeKey: "guest_read_time",     // 阅读时间键名
-  sessionKey: "guest_gate_shown",  // 是否已显示过弹窗
-  showOnTopics: true,             // 在帖子详情页显示
+  maxViews: 3,
+  readTimeLimit: 180, // 3分钟
+  storageKey: "guest_topic_views",
+  timeKey: "guest_read_time",
+  sessionKey: "guest_gate_shown",
 };
 
 let guestReadTimer = null;
 let guestReadStartTime = null;
 
 function checkGuestGate(url) {
-  // 检查是否已登录
   const currentUser = document.querySelector(".header-dropdown-toggle.current-user");
   if (currentUser) {
     stopGuestReadTimer();
-    return; // 已登录用户不显示
+    return;
   }
   
-  // 检查是否在帖子详情页
   if (!url.includes("/t/")) {
     stopGuestReadTimer();
     return;
   }
   
-  // 检查本次会话是否已显示过
   if (sessionStorage.getItem(GUEST_GATE_CONFIG.sessionKey)) {
     return;
   }
   
-  // 获取并增加浏览次数
   let views = parseInt(localStorage.getItem(GUEST_GATE_CONFIG.storageKey) || "0");
   views++;
   localStorage.setItem(GUEST_GATE_CONFIG.storageKey, views.toString());
   
-  // 检查是否达到浏览次数阈值
   if (views >= GUEST_GATE_CONFIG.maxViews) {
     showGuestGateModal();
     sessionStorage.setItem(GUEST_GATE_CONFIG.sessionKey, "true");
     return;
   }
   
-  // 启动阅读时间计时器
   startGuestReadTimer();
 }
 
 function startGuestReadTimer() {
-  // 停止之前的计时器
   stopGuestReadTimer();
   
-  // 获取已累计的阅读时间
   const savedTime = parseInt(localStorage.getItem(GUEST_GATE_CONFIG.timeKey) || "0");
   
-  // 如果已超过限制，直接显示弹窗
   if (savedTime >= GUEST_GATE_CONFIG.readTimeLimit) {
     showGuestGateModal();
     sessionStorage.setItem(GUEST_GATE_CONFIG.sessionKey, "true");
@@ -483,141 +269,54 @@ function startGuestReadTimer() {
   }
   
   guestReadStartTime = Date.now();
-  
-  // 计算剩余时间
   const remainingTime = (GUEST_GATE_CONFIG.readTimeLimit - savedTime) * 1000;
   
-  // 设置计时器
   guestReadTimer = setTimeout(() => {
-    // 保存累计阅读时间
     const elapsedSeconds = Math.floor((Date.now() - guestReadStartTime) / 1000);
     localStorage.setItem(GUEST_GATE_CONFIG.timeKey, (savedTime + elapsedSeconds).toString());
-    
-    // 显示弹窗
     showGuestGateModal();
     sessionStorage.setItem(GUEST_GATE_CONFIG.sessionKey, "true");
   }, remainingTime);
-  
-  // 显示阅读时间提示（可选）
-  showReadTimeIndicator(savedTime, GUEST_GATE_CONFIG.readTimeLimit);
 }
 
 function stopGuestReadTimer() {
   if (guestReadTimer) {
-    // 保存当前累计的阅读时间
     if (guestReadStartTime) {
       const savedTime = parseInt(localStorage.getItem(GUEST_GATE_CONFIG.timeKey) || "0");
       const elapsedSeconds = Math.floor((Date.now() - guestReadStartTime) / 1000);
       localStorage.setItem(GUEST_GATE_CONFIG.timeKey, (savedTime + elapsedSeconds).toString());
     }
-    
     clearTimeout(guestReadTimer);
     guestReadTimer = null;
     guestReadStartTime = null;
   }
-  
-  // 移除阅读时间提示
-  const indicator = document.querySelector(".guest-read-indicator");
-  if (indicator) {
-    indicator.remove();
-  }
-}
-
-function showReadTimeIndicator(usedTime, totalTime) {
-  // 移除旧的提示
-  const existing = document.querySelector(".guest-read-indicator");
-  if (existing) {
-    existing.remove();
-  }
-  
-  const remainingMinutes = Math.ceil((totalTime - usedTime) / 60);
-  
-  const indicator = document.createElement("div");
-  indicator.className = "guest-read-indicator";
-  indicator.innerHTML = `
-    <div class="indicator-content">
-      <svg viewBox="0 0 24 24" width="16" height="16">
-        <path fill="currentColor" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-      </svg>
-      <span>Guest reading: ${remainingMinutes} min left</span>
-      <a href="/signup">Sign up for unlimited</a>
-    </div>
-  `;
-  
-  document.body.appendChild(indicator);
 }
 
 function showGuestGateModal() {
-  // 检查是否已存在
-  if (document.querySelector(".guest-gate-modal")) {
-    return;
-  }
+  if (document.querySelector(".guest-gate-modal")) return;
   
   const modal = document.createElement("div");
   modal.className = "guest-gate-modal";
   modal.innerHTML = `
     <div class="guest-gate-overlay"></div>
     <div class="guest-gate-content">
-      <button class="guest-gate-close" aria-label="关闭">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-        </svg>
-      </button>
+      <button class="guest-gate-close">&times;</button>
       <div class="guest-gate-icon">
-        <svg viewBox="0 0 24 24" fill="currentColor">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="#228B22">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
         </svg>
       </div>
-      <h2 class="guest-gate-title">欢迎加入社区！</h2>
-      <p class="guest-gate-text">注册解锁更多精彩内容，与志同道合的朋友交流分享</p>
+      <h2>Welcome to the Community!</h2>
+      <p>Sign up to unlock more content and connect with others</p>
       <div class="guest-gate-buttons">
-        <a href="/signup" class="guest-gate-btn guest-gate-btn-primary">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-          </svg>
-          立即注册
-        </a>
-        <a href="/login" class="guest-gate-btn guest-gate-btn-secondary">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"/>
-          </svg>
-          已有账号？登录
-        </a>
+        <a href="/signup" class="btn-primary">Sign Up</a>
+        <a href="/login" class="btn-secondary">Log In</a>
       </div>
-      <p class="guest-gate-footer">继续浏览即表示同意我们的<a href="/tos">服务条款</a></p>
     </div>
   `;
   
   document.body.appendChild(modal);
   
-  // 添加动画
-  requestAnimationFrame(() => {
-    modal.classList.add("show");
-  });
-  
-  // 关闭按钮事件
-  modal.querySelector(".guest-gate-close").addEventListener("click", () => {
-    closeGuestGateModal(modal);
-  });
-  
-  // 点击遮罩关闭
-  modal.querySelector(".guest-gate-overlay").addEventListener("click", () => {
-    closeGuestGateModal(modal);
-  });
-  
-  // ESC 键关闭
-  document.addEventListener("keydown", function escHandler(e) {
-    if (e.key === "Escape") {
-      closeGuestGateModal(modal);
-      document.removeEventListener("keydown", escHandler);
-    }
-  });
-}
-
-function closeGuestGateModal(modal) {
-  modal.classList.remove("show");
-  modal.classList.add("hide");
-  setTimeout(() => {
-    modal.remove();
-  }, 300);
+  modal.querySelector(".guest-gate-close").addEventListener("click", () => modal.remove());
+  modal.querySelector(".guest-gate-overlay").addEventListener("click", () => modal.remove());
 }

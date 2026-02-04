@@ -1,5 +1,5 @@
 // ==========================================
-// Desktop Only Styles - 按设计稿布局
+// Desktop Only Styles - 严格按设计稿
 // ==========================================
 
 // 主布局：左侧边栏 + 右侧内容
@@ -9,65 +9,30 @@
   max-width: 100%;
 }
 
-// 左侧边栏 - 固定显示
+// 左侧边栏容器
 .sidebar-wrapper {
   display: block !important;
   position: sticky;
-  top: 120px;
-  width: 260px;
-  min-width: 260px;
+  top: 160px; // 品牌栏 + 版块栏 + 标签栏
+  width: 220px;
+  min-width: 220px;
   height: fit-content;
-  max-height: calc(100vh - 140px);
-  background: var(--secondary);
-  border: 1px solid var(--primary-low);
-  border-radius: 8px;
+  max-height: calc(100vh - 180px);
   margin: 20px 0 20px 20px;
   overflow-y: auto;
 
-  // 隐藏不需要的部分
-  [data-section-name="chat-channels"],
-  [data-section-name="chat-dms"],
-  [data-section-name="categories"],
-  [data-section-name="tags"] {
-    display: none !important;
+  // 隐藏原有内容（由JS替换）
+  .sidebar-sections {
+    // 被JS隐藏
   }
 
   .sidebar-container {
     border-right: 0;
+    background: transparent;
   }
 
   .sidebar__panel-switch-button {
     display: none;
-  }
-
-  .sidebar-sections {
-    padding: 12px;
-  }
-
-  .sidebar-section-link {
-    padding: 10px 12px;
-    border-radius: 6px;
-    font-size: 14px;
-
-    &:hover {
-      background: var(--primary-very-low);
-    }
-
-    &.active {
-      background: var(--tertiary);
-      color: #fff;
-    }
-  }
-
-  // 修改 "My posts" 为 "My Activity"
-  .sidebar-section-link[href="/my/activity"] .sidebar-section-link-content-text,
-  .sidebar-section-link[data-link-name="my-posts"] .sidebar-section-link-content-text {
-    font-size: 0;
-
-    &::after {
-      content: "My Activity";
-      font-size: 14px;
-    }
   }
 }
 
@@ -83,167 +48,172 @@ body.has-sidebar-page .wrap {
   padding: 0 !important;
 }
 
-.c-navbar__full-page-button {
-  display: none;
-}
-
+.c-navbar__full-page-button,
 .btn-sidebar-toggle {
   display: none !important;
 }
 
 // ==========================================
-// 左侧活动面板 - 放在侧边栏下方
+// 帖子列表 - 三列网格
 // ==========================================
-.robotime-left-panel {
-  position: fixed;
-  left: 20px;
-  bottom: 20px;
-  width: 260px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-// ==========================================
-// NEW TOPIC 按钮 - 红色矩形
-// ==========================================
-.robotime-fab {
-  width: 100%;
-  padding: 14px 20px;
-  background: #EE5A5A;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0 2px 8px rgba(238, 90, 90, 0.25);
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: #E53935;
-    box-shadow: 0 4px 12px rgba(238, 90, 90, 0.35);
+.topic-list {
+  .topic-list-header {
+    display: none !important;
   }
 
-  .fab-icon {
-    width: 18px;
-    height: 18px;
-    fill: #fff;
+  .topic-list-body {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    border: none !important;
   }
 
-  .fab-text {
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
-  }
-}
-
-// ==========================================
-// Activity Widget - 活动通知块
-// ==========================================
-.robotime-activity-widget {
-  width: 100%;
-  background: var(--secondary);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  overflow: hidden;
-  border: 1px solid var(--primary-low);
-
-  .widget-header {
-    background: #228B22;
-    color: #fff;
-    padding: 12px 14px;
-    font-weight: 600;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    svg {
-      width: 16px;
-      height: 16px;
-      fill: currentColor;
-    }
-  }
-
-  .carousel {
+  .topic-list-item {
+    display: flex !important;
+    flex-direction: column;
+    background: var(--secondary);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--primary-low);
+    transition: all 0.2s;
     position: relative;
-    height: 130px;
-    background: var(--primary-very-low);
 
-    .slide {
-      position: absolute;
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    // 隐藏原有结构
+    .posters,
+    .activity,
+    .posts,
+    .views {
+      display: none !important;
+    }
+
+    // 封面图区域
+    .topic-thumbnail,
+    .topic-list-thumbnail {
       width: 100%;
-      height: 100%;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-
-      &.active {
-        opacity: 1;
-      }
+      height: 160px;
+      background: var(--primary-very-low);
+      overflow: hidden;
+      order: 1;
 
       img {
         width: 100%;
         height: 100%;
         object-fit: cover;
       }
+
+      // 无图片时的占位
+      &:empty::before {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+      }
     }
 
-    .dots {
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
+    // 没有缩略图时创建占位
+    &:not(:has(.topic-thumbnail)):not(:has(.topic-list-thumbnail)) {
+      .main-link::before {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 140px;
+        background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+        order: 0;
+      }
+    }
+
+    // 标题和内容区域
+    .main-link {
+      flex: 1;
+      padding: 16px;
       display: flex;
-      gap: 6px;
+      flex-direction: column;
+      order: 2;
 
-      .dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.5);
-        cursor: pointer;
-        transition: all 0.2s;
-        border: none;
-        padding: 0;
+      .link-top-line {
+        margin-bottom: 8px;
 
-        &.active,
-        &:hover {
-          background: #fff;
-          transform: scale(1.2);
+        .title {
+          font-size: 14px;
+          font-weight: 600;
+          line-height: 1.4;
+          color: var(--primary);
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+
+          &:hover {
+            color: var(--tertiary);
+          }
+        }
+      }
+
+      .link-bottom-line {
+        margin-top: auto;
+
+        .badge-wrapper {
+          display: none;
         }
       }
     }
-  }
 
-  .widget-link {
-    display: block;
-    padding: 12px 16px;
-    text-align: center;
-    color: #228B22;
-    font-size: 13px;
-    font-weight: 500;
-    text-decoration: none;
-    border-top: 1px solid var(--primary-low);
-    transition: background 0.2s;
+    // 底部信息栏（自定义添加）
+    .topic-stats-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-top: 1px solid var(--primary-low);
+      font-size: 12px;
+      color: var(--primary-medium);
+      order: 3;
 
-    &:hover {
-      background: var(--primary-very-low);
+      .stats-left {
+        display: flex;
+        gap: 12px;
+
+        span {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+      }
+
+      .stats-right {
+        .avatar {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+        }
+      }
     }
   }
 }
 
 // ==========================================
-// Hide on Mobile
+// 响应式：中等屏幕两列
+// ==========================================
+@media (max-width: 1200px) {
+  .topic-list .topic-list-body {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// ==========================================
+// 隐藏移动端
 // ==========================================
 @media (max-width: 768px) {
-  .robotime-left-panel {
-    display: none !important;
-  }
 
-  .sidebar-wrapper {
+  .sidebar-wrapper,
+  .custom-sidebar-content {
     display: none !important;
   }
 
@@ -253,5 +223,10 @@ body.has-sidebar-page .wrap {
 
   #main-outlet {
     padding: 12px;
+  }
+
+  .topic-list .topic-list-body {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 }
