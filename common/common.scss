@@ -373,11 +373,11 @@
     }
   }
 
-  // NEW TOPIC 按钮
+  // NEW TOPIC 按钮 - 蓝色
   .sidebar-new-topic-btn {
     width: 100%;
     padding: 12px;
-    background: #EE5A5A;
+    background: #3B82F6;
     color: #fff;
     border: none;
     border-radius: 25px;
@@ -388,10 +388,16 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: background 0.2s;
+    transition: all 0.2s;
 
     &:hover {
-      background: #E53935;
+      background: #2563EB;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
     }
   }
 }

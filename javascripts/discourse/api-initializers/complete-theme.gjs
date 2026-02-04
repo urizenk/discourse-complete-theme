@@ -2,6 +2,7 @@ import { apiInitializer } from "discourse/lib/api";
 
 export default apiInitializer("1.8.0", (api) => {
   const router = api.container.lookup("router:main");
+  const composer = api.container.lookup("service:composer");
   
   // 页面变化时初始化
   api.onPageChange((url) => {
@@ -9,10 +10,19 @@ export default apiInitializer("1.8.0", (api) => {
     highlightActiveCategory(url);
     initCustomSidebar();
     checkGuestGate(url);
+    bindNewTopicButton(composer);
   });
   
   // 点击事件处理
   document.addEventListener("click", (e) => {
+    // NEW TOPIC 按钮点击
+    const newTopicBtn = e.target.closest("#custom-new-topic-btn");
+    if (newTopicBtn) {
+      e.preventDefault();
+      openNewTopicComposer(composer);
+      return;
+    }
+    
     // 版块导航点击
     const categoryItem = e.target.closest(".category-item");
     if (categoryItem) {
@@ -57,6 +67,34 @@ export default apiInitializer("1.8.0", (api) => {
   // 滚动监听
   window.addEventListener("scroll", onScroll, { passive: true });
 });
+
+// 打开新帖子编辑器
+function openNewTopicComposer(composer) {
+  if (!composer) return;
+  
+  // 检查用户是否登录
+  const currentUser = document.querySelector(".header-dropdown-toggle.current-user");
+  if (!currentUser) {
+    // 未登录，跳转到登录页
+    window.location.href = "/login";
+    return;
+  }
+  
+  // 打开Discourse的编辑器
+  composer.open({
+    action: "createTopic",
+    draftKey: "new_topic",
+    draftSequence: 0
+  });
+}
+
+// 绑定NEW TOPIC按钮（备用方法）
+function bindNewTopicButton(composer) {
+  const btn = document.querySelector("#custom-new-topic-btn");
+  if (btn && !btn.dataset.bound) {
+    btn.dataset.bound = "true";
+  }
+}
 
 // 滚动节流
 let ticking = false;
@@ -180,7 +218,7 @@ function initCustomSidebar() {
       <a href="/c/events" class="widget-link">View All Events</a>
     </div>
     
-    <button class="sidebar-new-topic-btn" onclick="document.querySelector('#create-topic')?.click()">
+    <button class="sidebar-new-topic-btn" id="custom-new-topic-btn">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
         <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
       </svg>
