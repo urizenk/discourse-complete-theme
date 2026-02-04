@@ -72,9 +72,10 @@ function updateNavOnScroll() {
   const nav = document.querySelector(".robotime-category-nav");
   if (nav) {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    if (scrollTop > 200) {
+    // 滚动超过100px时收缩，回到50px以内恢复
+    if (scrollTop > 100) {
       nav.classList.add("shrink");
-    } else if (scrollTop < 100) {
+    } else if (scrollTop < 50) {
       nav.classList.remove("shrink");
     }
   }
@@ -113,8 +114,13 @@ function highlightActiveCategory(currentUrl) {
   items.forEach((item) => {
     item.classList.remove("active");
     const href = item.getAttribute("href");
-    if (href && currentUrl.includes(href)) {
-      item.classList.add("active");
+    if (href) {
+      // 提取版块slug进行匹配
+      const categorySlug = href.replace("/c/", "").split("/")[0];
+      if (currentUrl.includes(`/c/${categorySlug}`) || 
+          currentUrl.includes(`/c/${categorySlug}/`)) {
+        item.classList.add("active");
+      }
     }
   });
 }
