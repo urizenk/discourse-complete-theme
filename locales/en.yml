@@ -1,15 +1,22 @@
 en:
   theme_metadata:
-    description: "Complete custom theme with top navigation, grid layout, floating button and activity widget"
-  
+    description: "Complete custom theme with configurable navigation, card grid layout, daily check-in, and guest gate"
+
   js:
     create_topic: "NEW TOPIC"
-    view_events: "View All Events"
+    checkin: "Check-in"
     events: "Official Events"
+    view_events: "View All Events"
     home: "Home"
-    news_giveaways: "News & Giveaways"
-    need_a_hand: "Need A Hand?"
-    nancis_diary: "Nanci's Diary"
-    how_to: "How To"
-    showcase: "Showcase"
-    community: "Community"
+    sign_up: "Sign Up"
+    log_in: "Log In"
+    welcome_title: "Welcome to the Community!"
+    welcome_desc: "Sign up to unlock more content and connect with others"
+    checkin_title: "Daily Check-in"
+    checkin_now: "Check In Now"
+    checked_in: "Checked in!"
+    lucky_draw: "Lucky Draw"
+    draw_now: "Draw Now"
+    total: "Total"
+    points: "Points"
+    streak: "Streak"

@@ -1,105 +1,64 @@
-<!-- 第1层：品牌导航栏 -->
-<div id="robotime-brand-nav" class="robotime-brand-nav">
+<!-- 品牌导航栏 -->
+<div id="robotime-brand-nav" class="robotime-brand-nav" style="display:none;">
   <a href="/" class="brand-logo">ROBOTIME</a>
-  <nav class="brand-links">
-    <a href="#" class="checkin-link" id="nav-checkin-btn">Check-in</a>
-    <a href="/c/help">Help</a>
-    <a href="/c/community-perks">Community Perks</a>
-    <a href="/c/win-prize">Win Prize</a>
-    <a href="/c/how-to">How To</a>
-    <a href="/about">About</a>
-    <a href="https://www.robotime.com" target="_blank">Buy</a>
-  </nav>
+  <nav class="brand-links" id="brand-links-container"></nav>
 </div>
 
-<!-- 第2层：版块图片导航 -->
-<div id="robotime-category-nav" class="robotime-category-nav">
-  <button class="nav-arrow nav-arrow-left" aria-label="向左滚动">
+<!-- 版块图片导航（由 JS 从 Discourse 分类数据动态生成） -->
+<div id="robotime-category-nav" class="robotime-category-nav" style="display:none;">
+  <button class="nav-arrow nav-arrow-left" aria-label="Scroll left">
     <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff">
       <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
     </svg>
   </button>
-
-  <div class="category-list">
-    <!-- 版块1: News & Giveaways - 礼物盒/新闻 -->
-    <a href="/c/news-giveaways" class="category-item" data-category="news">
-      <div class="category-image">
-        <img src="https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=200&h=140&fit=crop"
-          alt="News & Giveaways" />
-      </div>
-      <span class="category-name">News & Giveaways</span>
-    </a>
-
-    <!-- 版块2: Need A Hand? - 工具/帮助 -->
-    <a href="/c/need-a-hand" class="category-item" data-category="help">
-      <div class="category-image">
-        <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=200&h=140&fit=crop"
-          alt="Need A Hand?" />
-      </div>
-      <span class="category-name">Need A Hand?</span>
-    </a>
-
-    <!-- 版块3: Nanci's Diary - 日记本/笔记 -->
-    <a href="/c/nancis-diary" class="category-item" data-category="diary">
-      <div class="category-image">
-        <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=200&h=140&fit=crop" alt="Nanci's Diary" />
-      </div>
-      <span class="category-name">Nanci's Diary</span>
-    </a>
-
-    <!-- 版块4: How To - DIY/教程 -->
-    <a href="/c/how-to" class="category-item" data-category="howto">
-      <div class="category-image">
-        <img src="https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=200&h=140&fit=crop" alt="How To" />
-      </div>
-      <span class="category-name">How To</span>
-    </a>
-
-    <!-- 版块5: Showcase - 木质模型展示 -->
-    <a href="/c/showcase" class="category-item" data-category="showcase">
-      <div class="category-image">
-        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=140&fit=crop" alt="Showcase" />
-      </div>
-      <span class="category-name">Showcase</span>
-    </a>
-
-    <!-- 版块6: Community - 社区/朋友 -->
-    <a href="/c/community" class="category-item" data-category="community">
-      <div class="category-image">
-        <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=200&h=140&fit=crop" alt="Community" />
-      </div>
-      <span class="category-name">Community</span>
-    </a>
-
-    <!-- 版块7: Events - 活动 -->
-    <a href="/c/events" class="category-item" data-category="events">
-      <div class="category-image">
-        <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=200&h=140&fit=crop" alt="Events" />
-      </div>
-      <span class="category-name">Events</span>
-    </a>
-
-    <!-- 版块8: Reviews - 评测 -->
-    <a href="/c/reviews" class="category-item" data-category="reviews">
-      <div class="category-image">
-        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&h=140&fit=crop" alt="Reviews" />
-      </div>
-      <span class="category-name">Reviews</span>
-    </a>
-  </div>
-
-  <button class="nav-arrow nav-arrow-right" aria-label="向右滚动">
+  <div class="category-list" id="category-list-container"></div>
+  <button class="nav-arrow nav-arrow-right" aria-label="Scroll right">
     <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff">
       <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z" />
     </svg>
   </button>
 </div>
 
-<!-- 第3层：标签导航栏 -->
-<div id="robotime-tag-nav" class="robotime-tag-nav">
-  <a href="/tags" class="tag-item">All Tags</a>
-  <a href="/tag/featured" class="tag-item">Featured</a>
-  <a href="/tag/tutorial" class="tag-item">Tutorial</a>
-  <a href="/tag/tips" class="tag-item">Tips</a>
-  <a href="/tag/review" class="tag-item">Review</a>
+<!-- 标签导航栏 -->
+<div id="robotime-tag-nav" class="robotime-tag-nav" style="display:none;"></div>
+
+<!-- 悬浮发帖按钮 -->
+<div id="floating-new-topic" class="floating-new-topic-btn" style="display:none;">
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+  </svg>
 </div>
+
+<!-- 注册页面 Banner（由 JS 根据设置控制显示） -->
+<div id="registration-banner" class="registration-banner" style="display:none;">
+  <div class="registration-banner-overlay">
+    <h2 class="registration-banner-title"></h2>
+    <p class="registration-banner-desc"></p>
+  </div>
+</div>
+
+<script type="text/discourse-plugin" version="0.8">
+  window.__THEME_SETTINGS__ = {
+    brand_name: settings.brand_name,
+    nav_background: settings.nav_background,
+    nav_active_color: settings.nav_active_color,
+    show_tag_nav: settings.show_tag_nav,
+    tag_nav_items: settings.tag_nav_items,
+    brand_links: settings.brand_links,
+    show_carousel: settings.show_carousel,
+    carousel_title: settings.carousel_title,
+    carousel_slide_1: settings.carousel_slide_1,
+    carousel_slide_2: settings.carousel_slide_2,
+    carousel_slide_3: settings.carousel_slide_3,
+    grid_columns: settings.grid_columns,
+    show_floating_button: settings.show_floating_button,
+    show_checkin_nav: settings.show_checkin_nav,
+    guest_gate_enabled: settings.guest_gate_enabled,
+    guest_max_views: settings.guest_max_views,
+    guest_read_time: settings.guest_read_time,
+    show_registration_banner: settings.show_registration_banner,
+    registration_banner_url: settings.registration_banner_url,
+    registration_banner_text: settings.registration_banner_text,
+    registration_banner_desc: settings.registration_banner_desc,
+  };
+</script>

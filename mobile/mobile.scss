@@ -1,149 +1,30 @@
-// ==========================================
-// Mobile Styles - 严格按设计稿
-// ==========================================
+// ===========================================
+// Mobile Styles
+// ===========================================
 
-// 隐藏桌面元素
 .sidebar-wrapper,
 .custom-sidebar-content {
-  display: none !important;
+  display: none;
 }
 
-// ==========================================
-// 第1层：品牌导航栏
-// ==========================================
-.robotime-brand-nav {
-  padding: 6px 12px;
-
-  .brand-logo {
-    font-size: 12px;
-    padding: 3px 8px;
-  }
-
-  .brand-links {
-    display: none;
-  }
-}
-
-// ==========================================
-// 第2层：版块图片导航
-// ==========================================
-.robotime-category-nav {
-  top: 50px !important;
-  padding: 12px 8px;
-
-  .nav-arrow {
-    width: 32px;
-    height: 32px;
-    margin: 0 6px;
-  }
-
-  .category-list {
-    gap: 12px;
-  }
-
-  .category-image {
-    width: 120px;
-    height: 75px;
-    border-radius: 8px;
-  }
-
-  .category-name {
-    font-size: 11px;
-    max-width: 120px;
-  }
-
-  &.shrink {
-    .category-item {
-      padding: 4px 10px;
-    }
-
-    .category-name {
-      font-size: 11px;
-    }
-  }
-}
-
-// ==========================================
-// 第3层：标签导航栏
-// ==========================================
-.robotime-tag-nav {
-  padding: 8px 12px;
-  gap: 6px;
-
-  .tag-item {
-    padding: 4px 12px;
-    font-size: 12px;
-  }
-}
-
-// ==========================================
-// 帖子列表 - 移动端单列瀑布流
-// ==========================================
-.topic-list .topic-list-body {
-  column-count: 1 !important;
-}
-
-.topic-list .topic-list-item {
-  margin-bottom: 12px;
-  border-radius: 12px;
-}
-
-.topic-card {
-  .card-cover {
-    max-height: 200px !important;
-  }
-
-  .card-content {
-    padding: 12px;
-
-    .card-title {
-      font-size: 14px;
-    }
-  }
-
-  .card-footer {
-    padding: 0 12px 12px;
-  }
-}
-
-// ==========================================
-// 主内容区
-// ==========================================
 #main-outlet-wrapper {
-  display: block !important;
+  display: block;
 }
 
 #main-outlet {
-  padding: 12px !important;
+  padding: 12px;
 }
 
-.wrap {
-  padding: 0 !important;
-}
+.wrap { padding: 0; }
 
-// ==========================================
-// 隐藏不需要的元素
-// ==========================================
 .search-menu,
 .c-navbar__full-page-button,
 .btn-sidebar-toggle {
-  display: none !important;
+  display: none;
 }
 
-// ==========================================
-// 弹窗移动端适配
-// ==========================================
-.guest-gate-modal .guest-gate-content {
-  width: 90% !important;
-  max-width: 340px;
-  margin: 0 auto;
-}
-
-// ==========================================
-// iPhone 安全区域
-// ==========================================
+// iPhone safe area
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
-
   .robotime-brand-nav,
   .robotime-category-nav {
     padding-left: env(safe-area-inset-left);

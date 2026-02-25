@@ -1,25 +1,70 @@
-# Theme Settings
+# ===========================================
+# Complete Custom Theme - Settings
+# 管理后台 → 外观 → 主题 → 设置 中可配置
+# ===========================================
 
-show_floating_button:
-  type: bool
-  default: true
-  description: "Show floating create topic button for logged-in users"
+# --- 品牌设置 ---
+brand_name:
+  type: string
+  default: "ROBOTIME"
+  description: "Brand name in top navigation bar"
 
-show_activity_widget:
-  type: bool
-  default: true
-  description: "Show activity/events widget on desktop"
-
-nav_background_color:
+# --- 导航栏设置 ---
+nav_background:
   type: string
   default: "#000000"
-  description: "Top navigation bar background color"
+  description: "Navigation bar background color"
 
 nav_active_color:
   type: string
-  default: "#228B22"
-  description: "Active category highlight color"
+  default: "#FFD700"
+  description: "Active category highlight color (gold)"
 
+show_tag_nav:
+  type: bool
+  default: true
+  description: "Show tag navigation bar"
+
+tag_nav_items:
+  type: list
+  default: "All Tags|/tags,Featured|/tag/featured,Tutorial|/tag/tutorial,Tips|/tag/tips,Review|/tag/review"
+  list_type: simple
+  description: "Tag navigation items (format: Label|URL)"
+
+# --- 品牌导航链接 ---
+brand_links:
+  type: list
+  default: "Help|/c/help,Community Perks|/c/community-perks,Win Prize|/c/win-prize,How To|/c/how-to,About|/about,Buy|https://www.robotime.com"
+  list_type: simple
+  description: "Brand navigation bar links (format: Label|URL)"
+
+# --- 轮播图设置 ---
+show_carousel:
+  type: bool
+  default: true
+  description: "Show activity carousel in sidebar"
+
+carousel_title:
+  type: string
+  default: "Official Events"
+  description: "Carousel widget title"
+
+carousel_slide_1:
+  type: string
+  default: ""
+  description: "Carousel slide 1: image_url|link_url|title"
+
+carousel_slide_2:
+  type: string
+  default: ""
+  description: "Carousel slide 2: image_url|link_url|title"
+
+carousel_slide_3:
+  type: string
+  default: ""
+  description: "Carousel slide 3: image_url|link_url|title"
+
+# --- 帖子布局 ---
 grid_columns:
   type: enum
   default: "3"
@@ -27,4 +72,57 @@ grid_columns:
     - "2"
     - "3"
     - "4"
-  description: "Number of columns in topic grid layout"
+  description: "Topic grid columns on desktop"
+
+# --- 悬浮发帖按钮 ---
+show_floating_button:
+  type: bool
+  default: true
+  description: "Show floating NEW TOPIC button"
+
+# --- 签到入口 ---
+show_checkin_nav:
+  type: bool
+  default: true
+  description: "Show check-in button in brand navigation"
+
+# --- 访客限制 ---
+guest_gate_enabled:
+  type: bool
+  default: true
+  description: "Enable guest reading limit"
+
+guest_max_views:
+  type: integer
+  default: 3
+  min: 1
+  max: 20
+  description: "Max topic views before guest gate"
+
+guest_read_time:
+  type: integer
+  default: 180
+  min: 30
+  max: 600
+  description: "Reading time limit in seconds"
+
+# --- 注册页面 Banner ---
+show_registration_banner:
+  type: bool
+  default: false
+  description: "Show banner on registration/signup page"
+
+registration_banner_url:
+  type: string
+  default: ""
+  description: "Registration page banner image URL"
+
+registration_banner_text:
+  type: string
+  default: "Welcome to the ROBOTIME Community!"
+  description: "Registration banner heading text"
+
+registration_banner_desc:
+  type: string
+  default: "Join us to share your builds, get tips, and connect with fellow builders."
+  description: "Registration banner description text"

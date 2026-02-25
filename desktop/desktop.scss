@@ -1,19 +1,17 @@
-// ==========================================
-// Desktop Only Styles - 严格按设计稿
-// ==========================================
+// ===========================================
+// Desktop Only Styles
+// ===========================================
 
-// 主布局：左侧边栏 + 右侧内容
 #main-outlet-wrapper {
   display: flex;
   gap: 0;
   max-width: 100%;
 }
 
-// 左侧边栏容器
 .sidebar-wrapper {
-  display: block !important;
+  display: block;
   position: sticky;
-  top: 160px; // 品牌栏 + 版块栏 + 标签栏
+  top: 160px;
   width: 220px;
   min-width: 220px;
   height: fit-content;
@@ -21,22 +19,13 @@
   margin: 20px 0 20px 20px;
   overflow-y: auto;
 
-  // 隐藏原有内容（由JS替换）
-  .sidebar-sections {
-    // 被JS隐藏
-  }
-
   .sidebar-container {
     border-right: 0;
     background: transparent;
   }
-
-  .sidebar__panel-switch-button {
-    display: none;
-  }
+  .sidebar__panel-switch-button { display: none; }
 }
 
-// 内容区域
 #main-outlet {
   flex: 1;
   min-width: 0;
@@ -44,185 +33,11 @@
 }
 
 body.has-sidebar-page .wrap {
-  max-width: 100% !important;
-  padding: 0 !important;
+  max-width: 100%;
+  padding: 0;
 }
 
 .c-navbar__full-page-button,
 .btn-sidebar-toggle {
-  display: none !important;
-}
-
-// ==========================================
-// 帖子列表 - 三列瀑布流
-// ==========================================
-.topic-list {
-  .topic-list-header {
-    display: none !important;
-  }
-
-  .topic-list-body {
-    column-count: 3;
-    column-gap: 20px;
-    border: none !important;
-  }
-
-  .topic-list-item {
-    display: inline-block !important;
-    width: 100%;
-    margin-bottom: 20px;
-    background: #4a4a4a;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    transition: all 0.2s;
-    position: relative;
-    break-inside: avoid;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    }
-
-    // 隐藏原有结构
-    >.posters,
-    >.activity,
-    >.posts,
-    >.views,
-    >.num,
-    td.posters,
-    td.activity,
-    td.posts,
-    td.views {
-      display: none !important;
-    }
-  }
-}
-
-// 帖子卡片内部结构
-.topic-card {
-  display: flex;
-  flex-direction: column;
-
-  // 封面图 - 自适应高度，不截断
-  .card-cover {
-    width: 100%;
-    max-height: 300px;
-    overflow: hidden;
-
-    img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    // 占位图
-    &.placeholder {
-      height: 180px;
-      background: #666;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #999;
-      font-size: 14px;
-    }
-  }
-
-  // 内容区域
-  .card-content {
-    padding: 14px;
-
-    .card-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #fff;
-      line-height: 1.4;
-      margin-bottom: 12px;
-
-      a {
-        color: inherit;
-        text-decoration: none;
-
-        &:hover {
-          color: #3B82F6;
-        }
-      }
-    }
-  }
-
-  // 底部信息栏
-  .card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 14px 14px;
-
-    // 左侧统计
-    .card-stats {
-      display: flex;
-      gap: 12px;
-      font-size: 12px;
-      color: #aaa;
-
-      .stat-item {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-
-        svg {
-          width: 14px;
-          height: 14px;
-          fill: currentColor;
-        }
-      }
-    }
-
-    // 右侧头像
-    .card-avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #666;
-      overflow: hidden;
-
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-    }
-  }
-}
-
-// ==========================================
-// 响应式：中等屏幕两列
-// ==========================================
-@media (max-width: 1200px) {
-  .topic-list .topic-list-body {
-    column-count: 2;
-  }
-}
-
-// ==========================================
-// 隐藏移动端
-// ==========================================
-@media (max-width: 768px) {
-
-  .sidebar-wrapper,
-  .custom-sidebar-content {
-    display: none !important;
-  }
-
-  #main-outlet-wrapper {
-    display: block;
-  }
-
-  #main-outlet {
-    padding: 12px;
-  }
-
-  .topic-list .topic-list-body {
-    column-count: 1;
-    gap: 12px;
-  }
+  display: none;
 }
