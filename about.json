@@ -4,12 +4,20 @@
   "license_url": "https://github.com/urizenk/discourse-complete-theme/blob/main/LICENSE",
   "component": false,
   "authors": "Custom Development",
-  "theme_version": "1.0.0",
+  "theme_version": "2.0.0",
   "minimum_discourse_version": "2.7.0",
   "maximum_discourse_version": null,
   "assets": {
-    "event1": "assets/event-banner-1.png",
-    "event2": "assets/event-banner-2.png"
+    "cat_help": "assets/cat-help.png",
+    "cat_prize": "assets/cat-prize.png",
+    "cat_community": "assets/cat-community.png",
+    "cat_general": "assets/cat-general.png",
+    "cat_howto": "assets/cat-howto.png",
+    "carousel_1": "assets/carousel-1.png",
+    "carousel_2": "assets/carousel-2.png",
+    "carousel_3": "assets/carousel-3.png",
+    "wheel": "assets/wheel.png",
+    "banner_hello": "assets/banner-hello.png"
   },
   "color_schemes": {},
   "modifiers": {},

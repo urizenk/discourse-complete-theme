@@ -6,25 +6,11 @@
   display: flex;
   gap: 0;
   max-width: 100%;
+  position: relative;
 }
 
-.sidebar-wrapper {
-  display: block;
-  position: sticky;
-  top: 160px;
-  width: 220px;
-  min-width: 220px;
-  height: fit-content;
-  max-height: calc(100vh - 180px);
-  margin: 20px 0 20px 20px;
-  overflow-y: auto;
-
-  .sidebar-container {
-    border-right: 0;
-    background: transparent;
-  }
-  .sidebar__panel-switch-button { display: none; }
-}
+// 隐藏 Discourse 原生 sidebar，用自定义左侧面板替代
+.sidebar-wrapper { display: none; }
 
 #main-outlet {
   flex: 1;
@@ -38,6 +24,4 @@ body.has-sidebar-page .wrap {
 }
 
 .c-navbar__full-page-button,
-.btn-sidebar-toggle {
-  display: none;
-}
+.btn-sidebar-toggle { display: none; }

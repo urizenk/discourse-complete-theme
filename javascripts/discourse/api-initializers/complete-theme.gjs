@@ -28,7 +28,7 @@ async function fetchJson(url, options = {}) {
     "X-CSRF-Token": getCsrfToken(),
     ...(options.headers || {}),
   };
-  if (options.method === "POST") {
+  if (options.method === "POST" || options.method === "PUT") {
     headers["Content-Type"] = "application/json";
   }
   const response = await fetch(url, { ...options, headers });
@@ -48,37 +48,29 @@ export default apiInitializer("1.8.0", (api) => {
       buildBrandNav(S);
       buildCategoryNav(site, S);
       buildTagNav(S);
-      setupFloatingButton(S, composer);
+      buildActivityCarousel(S);
+      setupFloatingButton(S);
       setupRegistrationBanner(S, url);
       initialized = true;
     }
     insertNavBars();
+    insertLeftPanel();
     highlightActiveCategory(url);
+    highlightActiveSidebar(url);
     checkGuestGate(url, S);
     showRegistrationBanner(S, url);
+    setTimeout(() => enhanceTopicCards(), 800);
   });
 
   document.addEventListener("click", (e) => {
     const checkinBtn = e.target.closest("#nav-checkin-btn");
-    if (checkinBtn) {
-      e.preventDefault();
-      showCheckinModal();
-      return;
-    }
+    if (checkinBtn) { e.preventDefault(); showCheckinModal(); return; }
 
     const markReadBtn = e.target.closest("#nav-mark-read-btn");
-    if (markReadBtn) {
-      e.preventDefault();
-      markAllRead(markReadBtn);
-      return;
-    }
+    if (markReadBtn) { e.preventDefault(); markAllRead(markReadBtn); return; }
 
     const floatingBtn = e.target.closest("#floating-new-topic");
-    if (floatingBtn) {
-      e.preventDefault();
-      openNewTopicComposer(composer);
-      return;
-    }
+    if (floatingBtn) { e.preventDefault(); openNewTopicComposer(composer); return; }
 
     const categoryItem = e.target.closest(".category-item");
     if (categoryItem) {
@@ -96,22 +88,43 @@ export default apiInitializer("1.8.0", (api) => {
       return;
     }
 
+    const sidebarItem = e.target.closest(".sidebar-section .sidebar-item");
+    if (sidebarItem) {
+      e.preventDefault();
+      const href = sidebarItem.getAttribute("href");
+      if (href) router.transitionTo(href);
+      return;
+    }
+
     const leftArrow = e.target.closest(".nav-arrow-left");
     if (leftArrow) {
       document.querySelector(".category-list")?.scrollBy({ left: -200, behavior: "smooth" });
     }
-
     const rightArrow = e.target.closest(".nav-arrow-right");
     if (rightArrow) {
       document.querySelector(".category-list")?.scrollBy({ left: 200, behavior: "smooth" });
     }
+
+    const dot = e.target.closest(".carousel-dots .dot");
+    if (dot) {
+      goToSlide(parseInt(dot.dataset.index));
+    }
   });
 
   window.addEventListener("scroll", onScroll, { passive: true });
+
+  const contentObserver = new MutationObserver(() => {
+    const items = document.querySelectorAll(".topic-list-item:not([data-enhanced])");
+    if (items.length > 0) setTimeout(() => enhanceTopicCards(), 300);
+  });
+  const mainOutlet = document.getElementById("main-outlet");
+  if (mainOutlet) {
+    contentObserver.observe(mainOutlet, { childList: true, subtree: true });
+  }
 });
 
 // ===========================================
-// 构建品牌导航栏
+// 品牌导航栏
 // ===========================================
 function buildBrandNav(S) {
   const nav = document.getElementById("robotime-brand-nav");
@@ -159,7 +172,7 @@ function buildBrandNav(S) {
 }
 
 // ===========================================
-// 构建版块导航（从 Discourse 分类数据动态生成）
+// 版块导航
 // ===========================================
 function buildCategoryNav(site, S) {
   const container = document.getElementById("category-list-container");
@@ -183,9 +196,19 @@ function buildCategoryNav(site, S) {
     const imgDiv = document.createElement("div");
     imgDiv.className = "category-image";
 
-    if (cat.uploaded_logo) {
+    const catAssetMap = {
+      help: S.asset_cat_help,
+      "community-perks": S.asset_cat_community,
+      "win-prize": S.asset_cat_prize,
+      general: S.asset_cat_general,
+      "how-to": S.asset_cat_howto,
+    };
+
+    const logoUrl = cat.uploaded_logo?.url || cat.uploaded_logo || catAssetMap[cat.slug] || "";
+
+    if (logoUrl) {
       const img = document.createElement("img");
-      img.src = cat.uploaded_logo.url || cat.uploaded_logo;
+      img.src = logoUrl;
       img.alt = cat.name;
       img.loading = "lazy";
       imgDiv.appendChild(img);
@@ -211,11 +234,10 @@ function buildCategoryNav(site, S) {
 }
 
 // ===========================================
-// 构建标签导航栏
+// 标签导航栏
 // ===========================================
 function buildTagNav(S) {
   if (!S.show_tag_nav) return;
-
   const nav = document.getElementById("robotime-tag-nav");
   if (!nav) return;
 
@@ -230,12 +252,123 @@ function buildTagNav(S) {
       nav.appendChild(a);
     }
   });
-
   nav.style.display = "";
 }
 
 // ===========================================
-// 插入导航栏到正确位置
+// 左侧面板插入
+// ===========================================
+function insertLeftPanel() {
+  const panel = document.getElementById("left-panel");
+  const wrapper = document.getElementById("main-outlet-wrapper");
+  const mainOutlet = document.getElementById("main-outlet");
+
+  if (panel && wrapper && mainOutlet && !panel.dataset.inserted) {
+    panel.style.display = "";
+    wrapper.insertBefore(panel, mainOutlet);
+    panel.dataset.inserted = "true";
+  }
+}
+
+function highlightActiveSidebar(url) {
+  const items = document.querySelectorAll(".sidebar-section .sidebar-item");
+  items.forEach(item => {
+    item.classList.remove("active");
+    const href = item.getAttribute("href");
+    if (href === "/latest" && (url === "/" || url === "/latest")) {
+      item.classList.add("active");
+    } else if (href !== "/latest" && href && url.startsWith(href)) {
+      item.classList.add("active");
+    }
+  });
+}
+
+// ===========================================
+// 活动轮播
+// ===========================================
+let currentSlide = 0;
+let totalSlides = 0;
+
+function buildActivityCarousel(S) {
+  if (!S.show_carousel) return;
+
+  const carouselSection = document.getElementById("activity-carousel");
+  const slidesContainer = document.getElementById("carousel-slides-container");
+  const dotsContainer = document.getElementById("carousel-dots");
+  const titleEl = carouselSection?.querySelector(".carousel-title");
+  if (!carouselSection || !slidesContainer || !dotsContainer) return;
+
+  if (titleEl) titleEl.textContent = S.carousel_title || "Official Events";
+
+  const slides = [];
+  for (let i = 1; i <= 5; i++) {
+    const slideData = S[`carousel_slide_${i}`];
+    if (slideData && typeof slideData === "string" && slideData.trim()) {
+      const parts = slideData.split("|");
+      if (parts.length >= 2) {
+        slides.push({
+          image: parts[0].trim(),
+          link: parts[1].trim(),
+          title: parts[2]?.trim() || ""
+        });
+      }
+    }
+  }
+
+  if (slides.length === 0) {
+    carouselSection.style.display = "none";
+    return;
+  }
+
+  slides.forEach((slide, idx) => {
+    const a = document.createElement("a");
+    a.className = "carousel-slide";
+    a.href = slide.link;
+
+    const img = document.createElement("img");
+    img.src = slide.image;
+    img.alt = slide.title;
+    img.loading = "lazy";
+    a.appendChild(img);
+
+    if (slide.title) {
+      const titleDiv = document.createElement("div");
+      titleDiv.className = "slide-title";
+      titleDiv.textContent = slide.title;
+      a.appendChild(titleDiv);
+    }
+
+    slidesContainer.appendChild(a);
+
+    const dot = document.createElement("span");
+    dot.className = "dot" + (idx === 0 ? " active" : "");
+    dot.dataset.index = idx;
+    dotsContainer.appendChild(dot);
+  });
+
+  totalSlides = slides.length;
+  carouselSection.style.display = "";
+
+  if (totalSlides > 1) {
+    setInterval(() => {
+      currentSlide = (currentSlide + 1) % totalSlides;
+      goToSlide(currentSlide);
+    }, 4000);
+  }
+}
+
+function goToSlide(idx) {
+  currentSlide = idx;
+  const slidesContainer = document.getElementById("carousel-slides-container");
+  if (slidesContainer) {
+    slidesContainer.style.transform = `translateX(-${idx * 100}%)`;
+  }
+  const dots = document.querySelectorAll(".carousel-dots .dot");
+  dots.forEach((d, i) => d.classList.toggle("active", i === idx));
+}
+
+// ===========================================
+// 导航栏插入
 // ===========================================
 function insertNavBars() {
   const header = document.querySelector(".d-header-wrap");
@@ -247,12 +380,10 @@ function insertNavBars() {
     header.insertAdjacentElement("afterend", brandNav);
     brandNav.dataset.inserted = "true";
   }
-
   if (brandNav && categoryNav && !categoryNav.dataset.inserted) {
     brandNav.insertAdjacentElement("afterend", categoryNav);
     categoryNav.dataset.inserted = "true";
   }
-
   if (categoryNav && tagNav && !tagNav.dataset.inserted) {
     categoryNav.insertAdjacentElement("afterend", tagNav);
     tagNav.dataset.inserted = "true";
@@ -276,26 +407,100 @@ function highlightActiveCategory(currentUrl) {
 // ===========================================
 // 悬浮发帖按钮
 // ===========================================
-function setupFloatingButton(S, composer) {
+function setupFloatingButton(S) {
   if (!S.show_floating_button) return;
-
   const btn = document.getElementById("floating-new-topic");
   if (!btn) return;
 
   const currentUser = document.querySelector(".header-dropdown-toggle.current-user");
-  if (currentUser) {
-    btn.style.display = "";
-  }
+  if (currentUser) btn.style.display = "";
 }
 
 function openNewTopicComposer(composer) {
   if (!composer) return;
   const currentUser = document.querySelector(".header-dropdown-toggle.current-user");
-  if (!currentUser) {
-    window.location.href = "/login";
-    return;
-  }
+  if (!currentUser) { window.location.href = "/login"; return; }
   composer.open({ action: "createTopic", draftKey: "new_topic", draftSequence: 0 });
+}
+
+// ===========================================
+// 帖子卡片增强
+// ===========================================
+let enhancePending = false;
+
+function enhanceTopicCards() {
+  const items = document.querySelectorAll(".topic-list-item:not([data-enhanced])");
+  if (items.length === 0 || enhancePending) return;
+  enhancePending = true;
+
+  const currentPath = window.location.pathname;
+  let apiUrl = "/latest.json";
+  if (currentPath.includes("/c/")) {
+    const match = currentPath.match(/\/c\/[^/]+\/(\d+)/);
+    if (match) apiUrl = `/c/${match[1]}.json`;
+    else apiUrl = currentPath.replace(/\/$/, "") + ".json";
+  } else if (currentPath.includes("/top")) {
+    apiUrl = "/top.json";
+  } else if (currentPath.includes("/new")) {
+    apiUrl = "/new.json";
+  }
+
+  fetch(apiUrl, { headers: { "Accept": "application/json" } })
+    .then(r => r.json())
+    .then(data => {
+      const topics = data.topic_list?.topics || [];
+      const topicMap = {};
+      topics.forEach(t => { topicMap[t.id] = t; });
+
+      items.forEach(item => {
+        item.dataset.enhanced = "true";
+        const topicId = parseInt(item.dataset.topicId);
+        const topic = topicMap[topicId];
+        if (!topic) return;
+
+        const mainLink = item.querySelector(".main-link");
+        if (!mainLink) return;
+
+        if (topic.image_url && !item.querySelector(".topic-thumbnail")) {
+          const thumb = document.createElement("div");
+          thumb.className = "topic-thumbnail";
+          const img = document.createElement("img");
+          img.src = topic.image_url;
+          img.alt = "";
+          img.loading = "lazy";
+          thumb.appendChild(img);
+          item.insertBefore(thumb, item.firstChild);
+        }
+
+        if (!item.querySelector(".topic-stats-bar")) {
+          const statsBar = document.createElement("div");
+          statsBar.className = "topic-stats-bar";
+          const views = topic.views || 0;
+          const likes = topic.like_count || 0;
+          const replies = (topic.posts_count || 1) - 1;
+
+          statsBar.innerHTML = `
+            <span class="stat-item" title="Views">
+              <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              ${views}
+            </span>
+            <span class="stat-item" title="Likes">
+              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              ${likes}
+            </span>
+            <span class="stat-item" title="Replies">
+              <svg viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/></svg>
+              ${replies}
+            </span>
+          `;
+          const linkBottom = mainLink.querySelector(".link-bottom-line");
+          if (linkBottom) mainLink.insertBefore(statsBar, linkBottom.nextSibling);
+          else mainLink.appendChild(statsBar);
+        }
+      });
+      enhancePending = false;
+    })
+    .catch(() => { enhancePending = false; });
 }
 
 // ===========================================
@@ -309,9 +514,7 @@ async function markAllRead(btn) {
     await fetchJson("/topics/reset-new", { method: "PUT" });
     btn.textContent = "Done!";
     setTimeout(() => { btn.textContent = originalText; }, 2000);
-  } catch {
-    btn.textContent = originalText;
-  }
+  } catch { btn.textContent = originalText; }
 }
 
 // ===========================================
@@ -319,13 +522,9 @@ async function markAllRead(btn) {
 // ===========================================
 function setupRegistrationBanner(S, url) {
   if (!S.show_registration_banner || !S.registration_banner_url) return;
-
   const banner = document.getElementById("registration-banner");
   if (!banner) return;
-
-  if (S.registration_banner_url) {
-    banner.style.backgroundImage = `url(${S.registration_banner_url})`;
-  }
+  if (S.registration_banner_url) banner.style.backgroundImage = `url(${S.registration_banner_url})`;
   banner.querySelector(".registration-banner-title").textContent = S.registration_banner_text || "";
   banner.querySelector(".registration-banner-desc").textContent = S.registration_banner_desc || "";
 }
@@ -334,9 +533,7 @@ function showRegistrationBanner(S, url) {
   if (!S.show_registration_banner) return;
   const banner = document.getElementById("registration-banner");
   if (!banner) return;
-
-  const isSignup = url.includes("/signup") || url.includes("/register");
-  banner.style.display = isSignup ? "" : "none";
+  banner.style.display = (url.includes("/signup") || url.includes("/register")) ? "" : "none";
 }
 
 // ===========================================
@@ -344,16 +541,10 @@ function showRegistrationBanner(S, url) {
 // ===========================================
 function showCheckinModal() {
   const currentUser = document.querySelector(".header-dropdown-toggle.current-user");
-  if (!currentUser) {
-    window.location.href = "/login";
-    return;
-  }
+  if (!currentUser) { window.location.href = "/login"; return; }
 
   const existing = document.querySelector(".checkin-modal-overlay");
-  if (existing) {
-    existing.style.display = "flex";
-    return;
-  }
+  if (existing) { existing.style.display = "flex"; return; }
 
   const modal = document.createElement("div");
   modal.className = "checkin-modal-overlay";
@@ -373,20 +564,17 @@ function showCheckinModal() {
       </div>
     </div>
   `;
-
   document.body.appendChild(modal);
 
   const closeModal = () => { modal.style.display = "none"; };
   modal.querySelector(".modal-close").addEventListener("click", closeModal);
   modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
-
   loadCheckinStatus();
 }
 
 async function loadCheckinStatus() {
   try {
     const data = await fetchJson("/custom-plugin/checkin");
-
     const statusEl = document.getElementById("checkin-status");
     const btnEl = document.getElementById("do-checkin-btn");
     const statsEl = document.getElementById("checkin-stats");
@@ -395,7 +583,6 @@ async function loadCheckinStatus() {
     if (data.checked_in_today) {
       statusEl.innerHTML = `<span class="checked-text">Checked in! +${data.today_checkin?.points_earned || 10} pts</span>`;
       btnEl.style.display = "none";
-
       const lotteryData = await fetchJson("/custom-plugin/checkin/lottery");
       if (lotteryData.can_draw) {
         lotteryEl.style.display = "block";
@@ -424,31 +611,23 @@ async function loadCheckinStatus() {
 
 async function doCheckin() {
   const btn = document.getElementById("do-checkin-btn");
-  btn.disabled = true;
-  btn.textContent = "Checking in...";
+  btn.disabled = true; btn.textContent = "Checking in...";
   try {
     const data = await fetchJson("/custom-plugin/checkin", { method: "POST" });
     if (data.success) loadCheckinStatus();
-  } catch {
-    btn.disabled = false;
-    btn.textContent = "Check In Now";
-  }
+  } catch { btn.disabled = false; btn.textContent = "Check In Now"; }
 }
 
 async function doLotteryDraw() {
   const btn = document.getElementById("do-lottery-btn");
-  btn.disabled = true;
-  btn.textContent = "Drawing...";
+  btn.disabled = true; btn.textContent = "Drawing...";
   try {
     const data = await fetchJson("/custom-plugin/checkin/draw", { method: "POST" });
     if (data.success) {
       btn.style.display = "none";
       document.getElementById("lottery-result").innerHTML = `<p class="prize-won">Won: ${data.prize}</p>`;
     }
-  } catch {
-    btn.disabled = false;
-    btn.textContent = "Draw Now";
-  }
+  } catch { btn.disabled = false; btn.textContent = "Draw Now"; }
 }
 
 // ===========================================
@@ -458,23 +637,15 @@ let ticking = false;
 let isShrunken = false;
 
 function onScroll() {
-  if (!ticking) {
-    requestAnimationFrame(updateNavOnScroll);
-    ticking = true;
-  }
+  if (!ticking) { requestAnimationFrame(updateNavOnScroll); ticking = true; }
 }
 
 function updateNavOnScroll() {
   const nav = document.querySelector(".robotime-category-nav");
   if (nav) {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    if (!isShrunken && scrollTop > 150) {
-      nav.classList.add("shrink");
-      isShrunken = true;
-    } else if (isShrunken && scrollTop < 30) {
-      nav.classList.remove("shrink");
-      isShrunken = false;
-    }
+    if (!isShrunken && scrollTop > 150) { nav.classList.add("shrink"); isShrunken = true; }
+    else if (isShrunken && scrollTop < 30) { nav.classList.remove("shrink"); isShrunken = false; }
   }
   ticking = false;
 }
@@ -484,28 +655,25 @@ function updateNavOnScroll() {
 // ===========================================
 const GATE_STORAGE = "guest_topic_views";
 const GATE_TIME = "guest_read_time";
-const GATE_SESSION = "guest_gate_shown";
 let guestTimer = null;
 let guestStart = null;
 
 function checkGuestGate(url, S) {
   if (!S.guest_gate_enabled) return;
-
   const currentUser = document.querySelector(".header-dropdown-toggle.current-user");
   if (currentUser) { stopGuestTimer(); return; }
   if (!url.includes("/t/")) { stopGuestTimer(); return; }
-  if (sessionStorage.getItem(GATE_SESSION)) return;
 
-  let views = parseInt(localStorage.getItem(GATE_STORAGE) || "0");
-  views++;
-  localStorage.setItem(GATE_STORAGE, views.toString());
-
-  if (views >= (S.guest_max_views || 3)) {
-    showGuestGate();
-    sessionStorage.setItem(GATE_SESSION, "true");
-    return;
+  const views = parseInt(localStorage.getItem(GATE_STORAGE) || "0");
+  const readTime = parseInt(localStorage.getItem(GATE_TIME) || "0");
+  if (views >= (S.guest_max_views || 3) || readTime >= (S.guest_read_time || 180)) {
+    showGuestGate(); return;
   }
 
+  localStorage.setItem(GATE_STORAGE, (views + 1).toString());
+  if (views + 1 >= (S.guest_max_views || 3)) {
+    showGuestGate(); return;
+  }
   startGuestTimer(S);
 }
 
@@ -513,19 +681,13 @@ function startGuestTimer(S) {
   stopGuestTimer();
   const saved = parseInt(localStorage.getItem(GATE_TIME) || "0");
   const limit = S.guest_read_time || 180;
-
-  if (saved >= limit) {
-    showGuestGate();
-    sessionStorage.setItem(GATE_SESSION, "true");
-    return;
-  }
+  if (saved >= limit) { showGuestGate(); return; }
 
   guestStart = Date.now();
   guestTimer = setTimeout(() => {
     const elapsed = Math.floor((Date.now() - guestStart) / 1000);
     localStorage.setItem(GATE_TIME, (saved + elapsed).toString());
     showGuestGate();
-    sessionStorage.setItem(GATE_SESSION, "true");
   }, (limit - saved) * 1000);
 }
 
@@ -536,43 +698,32 @@ function stopGuestTimer() {
       const elapsed = Math.floor((Date.now() - guestStart) / 1000);
       localStorage.setItem(GATE_TIME, (saved + elapsed).toString());
     }
-    clearTimeout(guestTimer);
-    guestTimer = null;
-    guestStart = null;
+    clearTimeout(guestTimer); guestTimer = null; guestStart = null;
   }
 }
 
 function showGuestGate() {
   if (document.querySelector(".guest-gate-modal")) return;
-
+  document.body.style.overflow = "hidden";
   const modal = document.createElement("div");
   modal.className = "guest-gate-modal";
   modal.innerHTML = `
     <div class="guest-gate-overlay"></div>
     <div class="guest-gate-content">
-      <button class="guest-gate-close">&times;</button>
       <div class="guest-gate-icon">
         <svg viewBox="0 0 24 24" width="48" height="48" fill="#228B22">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+          <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
         </svg>
       </div>
       <h2>Welcome to the Community!</h2>
-      <p>Sign up to unlock more content and connect with others</p>
+      <p>Sign up to unlock unlimited reading and connect with others</p>
       <div class="guest-gate-buttons">
-        <a href="/signup" class="guest-gate-btn-primary">Sign Up</a>
+        <a href="/signup" class="guest-gate-btn-primary">Sign Up Free</a>
         <a href="/login" class="guest-gate-btn-secondary">Log In</a>
       </div>
+      <p class="guest-gate-hint">Registration is free and takes less than 30 seconds</p>
     </div>
   `;
-
   document.body.appendChild(modal);
   requestAnimationFrame(() => modal.classList.add("show"));
-
-  const close = () => {
-    modal.classList.remove("show");
-    modal.classList.add("hide");
-    setTimeout(() => modal.remove(), 300);
-  };
-  modal.querySelector(".guest-gate-close").addEventListener("click", close);
-  modal.querySelector(".guest-gate-overlay").addEventListener("click", close);
 }

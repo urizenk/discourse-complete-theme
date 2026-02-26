@@ -4,7 +4,7 @@
   <nav class="brand-links" id="brand-links-container"></nav>
 </div>
 
-<!-- 版块图片导航（由 JS 从 Discourse 分类数据动态生成） -->
+<!-- 版块图片导航 -->
 <div id="robotime-category-nav" class="robotime-category-nav" style="display:none;">
   <button class="nav-arrow nav-arrow-left" aria-label="Scroll left">
     <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff">
@@ -22,15 +22,91 @@
 <!-- 标签导航栏 -->
 <div id="robotime-tag-nav" class="robotime-tag-nav" style="display:none;"></div>
 
-<!-- 悬浮发帖按钮 -->
-<div id="floating-new-topic" class="floating-new-topic-btn" style="display:none;">
-  <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-    <path
-      d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-  </svg>
+<!-- 左侧面板：侧边栏 + 活动轮播 + 发帖按钮 -->
+<div id="left-panel" class="left-panel" style="display:none;">
+
+  <!-- 侧边栏导航 -->
+  <div class="left-panel-section sidebar-section">
+    <a href="/latest" class="sidebar-item" data-name="topics">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+        <path
+          d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
+      </svg>
+      <span>Topics</span>
+    </a>
+    <a href="/my/activity" class="sidebar-item" data-name="activity">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+        <path
+          d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" />
+      </svg>
+      <span>My Activity</span>
+    </a>
+    <a href="/my/messages" class="sidebar-item" data-name="messages">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+        <path
+          d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+      </svg>
+      <span>My Messages</span>
+    </a>
+    <a href="/review" class="sidebar-item" data-name="review">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+        <path
+          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+      </svg>
+      <span>Review</span>
+    </a>
+    <a href="/admin" class="sidebar-item" data-name="admin">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+        <path
+          d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94L14.4 2.81c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+      </svg>
+      <span>Admin</span>
+    </a>
+    <a href="/my/invited" class="sidebar-item" data-name="invite">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+        <path
+          d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+      </svg>
+      <span>Invite</span>
+    </a>
+    <a href="/badges" class="sidebar-item" data-name="more">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+        <path
+          d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+      </svg>
+      <span>More</span>
+    </a>
+  </div>
+
+  <!-- 分割线 -->
+  <div class="left-panel-divider"></div>
+
+  <!-- 活动通知轮播 -->
+  <div id="activity-carousel" class="left-panel-section carousel-section" style="display:none;">
+    <div class="carousel-header">
+      <span class="carousel-title"></span>
+    </div>
+    <div class="carousel-viewport">
+      <div class="carousel-slides" id="carousel-slides-container"></div>
+    </div>
+    <div class="carousel-dots" id="carousel-dots"></div>
+    <a href="/latest" class="carousel-view-all" id="carousel-view-all">View All Events</a>
+  </div>
+
+  <!-- 分割线 -->
+  <div class="left-panel-divider"></div>
+
+  <!-- 发帖按钮 -->
+  <div id="floating-new-topic" class="left-panel-new-topic" style="display:none;">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+    </svg>
+    <span>NEW TOPIC</span>
+  </div>
+
 </div>
 
-<!-- 注册页面 Banner（由 JS 根据设置控制显示） -->
+<!-- 注册页面 Banner -->
 <div id="registration-banner" class="registration-banner" style="display:none;">
   <div class="registration-banner-overlay">
     <h2 class="registration-banner-title"></h2>
@@ -42,8 +118,33 @@
   data-nav_active_color="#FFD700" data-show_tag_nav="true"
   data-tag_nav_items="All Tags|/tags,Featured|/tag/featured,Tutorial|/tag/tutorial,Tips|/tag/tips"
   data-brand_links="Help|/c/help,Community Perks|/c/community-perks,Win Prize|/c/win-prize,How To|/c/how-to,About|/about,Buy|https://www.robotime.com"
-  data-show_carousel="true" data-grid_columns="3" data-show_floating_button="true" data-show_checkin_nav="true"
+  data-show_carousel="true" data-carousel_title="Official Events" data-carousel_slide_1="" data-carousel_slide_2=""
+  data-carousel_slide_3="" data-grid_columns="3" data-show_floating_button="true" data-show_checkin_nav="true"
   data-guest_gate_enabled="true" data-guest_max_views="3" data-guest_read_time="180"
   data-show_registration_banner="false" data-registration_banner_url=""
   data-registration_banner_text="Welcome to the ROBOTIME Community!"
   data-registration_banner_desc="Join us to share your builds, get tips, and connect with fellow builders."></div>
+
+<script type="text/discourse-plugin" version="0.8">
+  const el = document.getElementById("theme-settings-data");
+  if (el) {
+    const uploads = settings.theme_uploads || {};
+    el.dataset.asset_carousel_1 = uploads.carousel_1 || "";
+    el.dataset.asset_carousel_2 = uploads.carousel_2 || "";
+    el.dataset.asset_carousel_3 = uploads.carousel_3 || "";
+    el.dataset.asset_banner_hello = uploads.banner_hello || "";
+    el.dataset.asset_wheel = uploads.wheel || "";
+    el.dataset.asset_cat_help = uploads.cat_help || "";
+    el.dataset.asset_cat_prize = uploads.cat_prize || "";
+    el.dataset.asset_cat_community = uploads.cat_community || "";
+    el.dataset.asset_cat_general = uploads.cat_general || "";
+    el.dataset.asset_cat_howto = uploads.cat_howto || "";
+
+    const s1 = uploads.carousel_1;
+    const s2 = uploads.carousel_2;
+    const s3 = uploads.carousel_3;
+    if (s1 && !el.dataset.carousel_slide_1) el.dataset.carousel_slide_1 = s1 + "|/latest|ROBOTIME Build";
+    if (s2 && !el.dataset.carousel_slide_2) el.dataset.carousel_slide_2 = s2 + "|/latest|Sweet Shack";
+    if (s3 && !el.dataset.carousel_slide_3) el.dataset.carousel_slide_3 = s3 + "|/latest|SALE";
+  }
+</script>
