@@ -1,7 +1,20 @@
 import { apiInitializer } from "discourse/lib/api";
 
 function getSettings() {
-  return window.__THEME_SETTINGS__ || {};
+  const el = document.getElementById("theme-settings-data");
+  if (!el) return {};
+  const s = {};
+  for (const attr of el.attributes) {
+    if (attr.name.startsWith("data-")) {
+      const key = attr.name.slice(5);
+      let val = attr.value;
+      if (val === "true") val = true;
+      else if (val === "false") val = false;
+      else if (/^\d+$/.test(val)) val = parseInt(val, 10);
+      s[key] = val;
+    }
+  }
+  return s;
 }
 
 function getCsrfToken() {

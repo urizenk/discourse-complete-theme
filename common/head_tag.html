@@ -25,7 +25,8 @@
 <!-- 悬浮发帖按钮 -->
 <div id="floating-new-topic" class="floating-new-topic-btn" style="display:none;">
   <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+    <path
+      d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
   </svg>
 </div>
 
@@ -37,28 +38,12 @@
   </div>
 </div>
 
-<script type="text/discourse-plugin" version="0.8">
-  window.__THEME_SETTINGS__ = {
-    brand_name: settings.brand_name,
-    nav_background: settings.nav_background,
-    nav_active_color: settings.nav_active_color,
-    show_tag_nav: settings.show_tag_nav,
-    tag_nav_items: settings.tag_nav_items,
-    brand_links: settings.brand_links,
-    show_carousel: settings.show_carousel,
-    carousel_title: settings.carousel_title,
-    carousel_slide_1: settings.carousel_slide_1,
-    carousel_slide_2: settings.carousel_slide_2,
-    carousel_slide_3: settings.carousel_slide_3,
-    grid_columns: settings.grid_columns,
-    show_floating_button: settings.show_floating_button,
-    show_checkin_nav: settings.show_checkin_nav,
-    guest_gate_enabled: settings.guest_gate_enabled,
-    guest_max_views: settings.guest_max_views,
-    guest_read_time: settings.guest_read_time,
-    show_registration_banner: settings.show_registration_banner,
-    registration_banner_url: settings.registration_banner_url,
-    registration_banner_text: settings.registration_banner_text,
-    registration_banner_desc: settings.registration_banner_desc,
-  };
-</script>
+<div id="theme-settings-data" style="display:none;" data-brand_name="ROBOTIME" data-nav_background="#000000"
+  data-nav_active_color="#FFD700" data-show_tag_nav="true"
+  data-tag_nav_items="All Tags|/tags,Featured|/tag/featured,Tutorial|/tag/tutorial,Tips|/tag/tips"
+  data-brand_links="Help|/c/help,Community Perks|/c/community-perks,Win Prize|/c/win-prize,How To|/c/how-to,About|/about,Buy|https://www.robotime.com"
+  data-show_carousel="true" data-grid_columns="3" data-show_floating_button="true" data-show_checkin_nav="true"
+  data-guest_gate_enabled="true" data-guest_max_views="3" data-guest_read_time="180"
+  data-show_registration_banner="false" data-registration_banner_url=""
+  data-registration_banner_text="Welcome to the ROBOTIME Community!"
+  data-registration_banner_desc="Join us to share your builds, get tips, and connect with fellow builders."></div>
