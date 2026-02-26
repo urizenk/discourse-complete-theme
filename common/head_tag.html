@@ -124,27 +124,3 @@
   data-show_registration_banner="false" data-registration_banner_url=""
   data-registration_banner_text="Welcome to the ROBOTIME Community!"
   data-registration_banner_desc="Join us to share your builds, get tips, and connect with fellow builders."></div>
-
-<script type="text/discourse-plugin" version="0.8">
-  const el = document.getElementById("theme-settings-data");
-  if (el) {
-    const uploads = settings.theme_uploads || {};
-    el.dataset.asset_carousel_1 = uploads.carousel_1 || "";
-    el.dataset.asset_carousel_2 = uploads.carousel_2 || "";
-    el.dataset.asset_carousel_3 = uploads.carousel_3 || "";
-    el.dataset.asset_banner_hello = uploads.banner_hello || "";
-    el.dataset.asset_wheel = uploads.wheel || "";
-    el.dataset.asset_cat_help = uploads.cat_help || "";
-    el.dataset.asset_cat_prize = uploads.cat_prize || "";
-    el.dataset.asset_cat_community = uploads.cat_community || "";
-    el.dataset.asset_cat_general = uploads.cat_general || "";
-    el.dataset.asset_cat_howto = uploads.cat_howto || "";
-
-    const s1 = uploads.carousel_1;
-    const s2 = uploads.carousel_2;
-    const s3 = uploads.carousel_3;
-    if (s1 && !el.dataset.carousel_slide_1) el.dataset.carousel_slide_1 = s1 + "|/latest|ROBOTIME Build";
-    if (s2 && !el.dataset.carousel_slide_2) el.dataset.carousel_slide_2 = s2 + "|/latest|Sweet Shack";
-    if (s3 && !el.dataset.carousel_slide_3) el.dataset.carousel_slide_3 = s3 + "|/latest|SALE";
-  }
-</script>

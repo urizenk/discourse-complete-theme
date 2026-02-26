@@ -14,6 +14,29 @@ function getSettings() {
       s[key] = val;
     }
   }
+
+  const uploads = (typeof settings !== "undefined" && settings.theme_uploads) || {};
+  s.asset_carousel_1 = uploads.carousel_1 || "";
+  s.asset_carousel_2 = uploads.carousel_2 || "";
+  s.asset_carousel_3 = uploads.carousel_3 || "";
+  s.asset_banner_hello = uploads.banner_hello || "";
+  s.asset_wheel = uploads.wheel || "";
+  s.asset_cat_help = uploads.cat_help || "";
+  s.asset_cat_prize = uploads.cat_prize || "";
+  s.asset_cat_community = uploads.cat_community || "";
+  s.asset_cat_general = uploads.cat_general || "";
+  s.asset_cat_howto = uploads.cat_howto || "";
+
+  if (uploads.carousel_1 && !s.carousel_slide_1) {
+    s.carousel_slide_1 = uploads.carousel_1 + "|/latest|ROBOTIME Build";
+  }
+  if (uploads.carousel_2 && !s.carousel_slide_2) {
+    s.carousel_slide_2 = uploads.carousel_2 + "|/latest|Sweet Shack";
+  }
+  if (uploads.carousel_3 && !s.carousel_slide_3) {
+    s.carousel_slide_3 = uploads.carousel_3 + "|/latest|SALE";
+  }
+
   return s;
 }
 
